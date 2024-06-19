@@ -1,5 +1,5 @@
 {
-	"name":"Not-Just-Web/njw-alt-text-plugin",
+	"name":"NotJustWeb/njw-alt-text-plugin",
 	"type" : "wordpress-plugin",
 	"description": "A WordPress plugin to add alt text to images in the media library",
 	"version": "1.0.0",
