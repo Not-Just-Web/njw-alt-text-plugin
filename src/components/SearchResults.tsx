@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { decode } from 'html-entities';
-import { SearchResultType, ErrorType, QueryResult } from '../helpers/types';
+import { ErrorType, QueryResult, QueryParamTypes } from '../helpers/types';
 import { useQuery } from 'react-query';
 import { sendGetRequest } from '../helpers/api';
 import { Table, Typography } from 'antd';
 import {
-	replacePostId,
 	getApiEndpoint,
 	replacePostType,
 } from '../helpers/conf';
 import Exporter from './Exporter';
+
+import { generateTableColumns } from './Columns';
 
 type SearchResultsProps = {
 	postType: string;
@@ -37,16 +37,21 @@ const SearchResults: React.FC<SearchResultsProps> = ({
 		error,
 		data: searchResponse,
 		refetch,
-	} = useQuery<QueryResult, ErrorType>(['searchResults', postType], () =>
-		sendGetRequest(SEARCH_RESULTS_URL, {
-			// eslint-disable-next-line
-			search: `"${keyword}"`,
-			page,
+	} = useQuery<QueryResult, ErrorType>(['searchResults', postType], () => {
+		const param: QueryParamTypes = {
 			per_page: perPage,
+			page,
+
 			orderby: sortField,
 			order: sortOrder,
-		})
-	);
+		};
+		if (keyword) {
+			// eslint-disable-next-line
+			param.search = `"${keyword}"`;
+		}
+
+		return sendGetRequest(SEARCH_RESULTS_URL, param)
+	});
 
 	const { Text } = Typography;
 
@@ -59,99 +64,15 @@ const SearchResults: React.FC<SearchResultsProps> = ({
 	const { data: searchData, header } = searchResponse || ({} as QueryResult);
 
 	const pageSizes = [10, 20, 30, 40, 50, 100];
-	const columns = [
-		{
-			title: 'S/N',
-			dataIndex: 'serialNumber',
-			key: 'serialNumber',
-			render: (text: string, record: SearchResultType, index: number) => (
-				<>{(page - 1) * perPage + (index + 1)}</>
-			),
-		},
-		{
-			title: 'Page Id',
-			dataIndex: 'id',
-			key: 'id',
-			sorter: true,
-			onHeaderCell: () => ({
-				onClick: () => {
-					setSortField('id');
-					setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-				},
-			}),
-		},
-		{
-			title: 'Title',
-			dataIndex: 'title',
-			sorter: true,
-			onHeaderCell: () => ({
-				onClick: () => {
-					setSortField('title');
-					setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-				},
-			}),
-			render: (text: string, record: SearchResultType) => {
-				const { rendered: titleRendered} = record.title;
-				return (
-					<>
-						<a
-							href={record.link ?? '#'}
-							key={record.id}
-							target="_blank"
-							rel="noopener noreferrer"
-						>
-							{decode(titleRendered)}
-						</a>
-					</>
-				)
-			},
-		},
-		{
-			title: 'Published Date',
-			dataIndex: 'date',
-			key: 'date',
-			sorter: true,
-			onHeaderCell: () => ({
-				onClick: () => {
-					setSortField('date');
-					setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-				},
-			}),
-			render: (text: string) => (
-				<>
-					{new Date(text).toLocaleString('en-AU', {
-						year: 'numeric',
-						month: 'short',
-						day: 'numeric',
-						hour: 'numeric',
-						minute: 'numeric',
-						hour12: true,
-						timeZone: 'Australia/Sydney'
-					})}
-				</>
-			),
-		},
-		{
-			title: 'Actions',
-			key: 'actions',
-
-			render: (text: string, record: SearchResultType) => (
-				<>
-					<a
-						href={replacePostId(
-							getApiEndpoint('admin_edit_url', baseUrl),
-							record.id
-						)}
-						key={record.id}
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						<span className="dashicons dashicons-edit"></span>
-					</a>
-				</>
-			),
-		},
-	];
+	const columns = generateTableColumns(
+		postType,
+		setSortField,
+		setSortOrder,
+		perPage,
+		sortOrder,
+		baseUrl,
+		page
+	);
 	const totalResults = header ? header.get('x-wp-total') : 0;
 	const totalPages = header ? header.get('x-wp-totalpages') : 0;
 	const exportKeys = ['id', 'link', 'title', 'date', 'edit_link'];

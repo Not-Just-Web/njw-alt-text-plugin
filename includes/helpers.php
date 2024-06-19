@@ -2,17 +2,17 @@
 /**
  * This file contains helper functions used in the NJW Skeleton application.
  *
- * @package PluginSkeleton\Helpers
+ * @package NjwMedia\Helpers
  * @since 1.0.0
  */
 
 /**
- *  Method named njw_skeleton_json_validate_and_return.
+ *  Method named njw_media_json_validate_and_return.
  *
  * @param  string $text --> passed the json text.
  * @return string | array -> based on passed text.
  */
-function njw_skeleton_json_validate_and_return( $text ) {
+function njw_media_json_validate_and_return( $text ) {
 	// decode the JSON data.
 	$result = json_decode( $text );
 
@@ -64,19 +64,19 @@ function njw_skeleton_json_validate_and_return( $text ) {
 
 
 /**
- * Method njw_skeleton_api_config
+ * Method njw_media_api_config
  *
  * @devnote : Plugin setting page will overwrite the setting present on option page.
  *
  * @return string | array -> based on passed text.
  */
-function njw_skeleton_api_config() {
+function njw_media_api_config() {
 	$default_option = [
-		'API_PROXY_URL'  => get_site_url() . '/wp-json/' . njw_skeleton_get_config( 'NAMESPACE' ) . '/' . njw_skeleton_get_config( 'ROUTE' ) . '/',
+		'API_PROXY_URL'  => get_site_url() . '/wp-json/' . njw_media_get_config( 'NAMESPACE' ) . '/' . njw_media_get_config( 'ROUTE' ) . '/',
 		'API_ACCESS_KEY' => '',
 	];
 
-	$am_tr_options = get_option( njw_skeleton_get_config( 'SETTINGS_NAME' ) ); // get the data from the plugin setting page.
+	$am_tr_options = get_option( njw_media_get_config( 'SETTINGS_NAME' ) ); // get the data from the plugin setting page.
 
 	$return_option = ! empty( $am_tr_options ) && is_array( $am_tr_options ) ? $am_tr_options : $default_option;
 
@@ -90,7 +90,7 @@ function njw_skeleton_api_config() {
  * @param string $message The message to be logged.
  * @return void
  */
-function njw_skeleton_log( $message ) {
+function njw_media_log( $message ) {
 	if ( WP_DEBUG === true ) {
 		if ( is_array( $message ) || is_object( $message ) ) {
 			// phpcs:ignore

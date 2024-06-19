@@ -8,19 +8,19 @@
  * @package wp-react-plugin-skeleton
  */
 
-namespace PluginSkeleton\Tests;
+namespace NjwMedia\Tests;
 
 use WP_Mock\Tools\TestCase;
 
 use WP_Mock;
 
 /**
- * Class ReactPluginSkeletonTest
+ * Class ReactNjwMediaTest
  *
  * This class represents the test case for the React Plugin Skeleton.
  * It extends the TestCase class, which is the base class for all test cases in PHPUnit.
  */
-class ReactPluginSkeletonTest extends TestCase {
+class ReactNjwMediaTest extends TestCase {
 	/**
 	 * Set up the test case.
 	 */
@@ -38,13 +38,13 @@ class ReactPluginSkeletonTest extends TestCase {
 	}
 
 	/**
-	 * Test wp_skeleton_enqueue_frontend_assets with a valid asset file.
+	 * Test njw_media_enqueue_frontend_assets with a valid asset file.
 	 *
-	 * This test verifies that the `wp_skeleton_enqueue_frontend_assets` function correctly enqueues the frontend assets
+	 * This test verifies that the `njw_media_enqueue_frontend_assets` function correctly enqueues the frontend assets
 	 * (JavaScript and CSS) with the correct dependencies and version.
 	 */
 	public function test_enqueue_frontend_assets_with_valid_asset_file() {
-		$asset_file_path = njw_skeleton_get_config( 'PLUGIN_DIR_PATH' ) . 'dist/frontend.asset.php';
+		$asset_file_path = njw_media_get_config( 'PLUGIN_DIR_PATH' ) . 'dist/frontend.asset.php';
 		// Check if the file exists, if not, set default values.
 		$asset_file = [
 			'dependencies' => [],
@@ -57,11 +57,11 @@ class ReactPluginSkeletonTest extends TestCase {
 
 		WP_Mock::userFunction( 'wp_enqueue_script' )
 		->once()
-		->with( 'frontend-script', njw_skeleton_get_config( 'PLUGIN_DIR_URL' ) . 'dist/frontend.js', $asset_file['dependencies'], $asset_file['version'], true )
+		->with( 'njw-mediafrontend-script', njw_media_get_config( 'PLUGIN_DIR_URL' ) . 'dist/frontend.js', $asset_file['dependencies'], $asset_file['version'], true )
 		->andReturnUsing(
 			function ( $arg1, $arg2, $arg3, $arg4, $arg5 ) use ( $asset_file ) {
 				$this->assertEquals( 'frontend-script', $arg1 );
-				$this->assertEquals( njw_skeleton_get_config( 'PLUGIN_DIR_URL' ) . 'dist/frontend.js', $arg2 );
+				$this->assertEquals( njw_media_get_config( 'PLUGIN_DIR_URL' ) . 'dist/frontend.js', $arg2 );
 				$this->assertEquals( $asset_file['dependencies'], $arg3 );
 				$this->assertEquals( $asset_file['version'], $arg4 );
 				$this->assertEquals( true, $arg5 );
@@ -70,28 +70,28 @@ class ReactPluginSkeletonTest extends TestCase {
 
 		WP_Mock::userFunction( 'wp_enqueue_style' )
 		->once()
-		->with( 'frontend-style', njw_skeleton_get_config( 'PLUGIN_DIR_URL' ) . 'dist/frontend.css', $asset_file['dependencies'], $asset_file['version'] )
+		->with( 'njw-media-frontend-style', njw_media_get_config( 'PLUGIN_DIR_URL' ) . 'dist/frontend.css', $asset_file['dependencies'], $asset_file['version'] )
 		->andReturnUsing(
 			function ( $arg1, $arg2, $arg3, $arg4 ) use ( $asset_file ) {
 				$this->assertEquals( 'frontend-style', $arg1 );
 				$this->assertEquals( $asset_file['dependencies'], $arg3 );
 				$this->assertEquals( $asset_file['version'], $arg4 );
-				$this->assertEquals( njw_skeleton_get_config( 'PLUGIN_DIR_URL' ) . 'dist/frontend.css', $arg2 );
+				$this->assertEquals( njw_media_get_config( 'PLUGIN_DIR_URL' ) . 'dist/frontend.css', $arg2 );
 			}
 		);
 
-		wp_skeleton_enqueue_frontend_assets();
+		njw_media_enqueue_frontend_assets();
 
 		WP_Mock::assertActionsCalled();
 	}
 
 	/**
-	 * Test wp_skeleton_enqueue_frontend_assets with a non-existent asset file.
+	 * Test njw_media_enqueue_frontend_assets with a non-existent asset file.
 	 *
-	 * This test verifies that the `wp_skeleton_enqueue_frontend_assets` function uses default values when the asset file does not exist.
+	 * This test verifies that the `njw_media_enqueue_frontend_assets` function uses default values when the asset file does not exist.
 	 */
 	public function test_enqueue_frontend_assets_with_non_existent_asset_file() {
-		wp_skeleton_enqueue_frontend_assets();
+		njw_media_enqueue_frontend_assets();
 
 		// No assertions needed, function should use default values.
 
@@ -99,11 +99,11 @@ class ReactPluginSkeletonTest extends TestCase {
 	}
 
 	/**
-	 * Test wp_skeleton_add_custom_menu_page.
+	 * Test njw_media_add_custom_menu_page.
 	 *
-	 * This test verifies that the `wp_skeleton_add_custom_menu_page` function correctly adds a custom menu page using the `add_menu_page` function.
+	 * This test verifies that the `njw_media_add_custom_menu_page` function correctly adds a custom menu page using the `add_menu_page` function.
 	 */
-	public function test_wp_skeleton_add_custom_menu_page() {
+	public function test_njw_media_add_custom_menu_page() {
 		// Mock the add_menu_page function.
 		WP_Mock::userFunction(
 			'add_menu_page',
@@ -114,7 +114,7 @@ class ReactPluginSkeletonTest extends TestCase {
 					'WP Skeleton React',
 					'edit_posts',
 					'wp-skeleton-page',
-					'wp_skeleton_custom_page_callback',
+					'njw_media_custom_page_callback',
 					'dashicons-analytics',
 					4,
 				],
@@ -122,22 +122,22 @@ class ReactPluginSkeletonTest extends TestCase {
 		);
 
 		// Call the function.
-		wp_skeleton_add_custom_menu_page();
+		njw_media_add_custom_menu_page();
 
 		WP_Mock::assertActionsCalled();
 	}
 
 	/**
-	 * Test wp_skeleton_custom_page_callback.
+	 * Test njw_media_custom_page_callback.
 	 *
-	 * This test verifies that the `wp_skeleton_custom_page_callback` function correctly outputs the expected HTML content.
+	 * This test verifies that the `njw_media_custom_page_callback` function correctly outputs the expected HTML content.
 	 */
-	public function test_wp_skeleton_custom_page_callback() {
+	public function test_njw_media_custom_page_callback() {
 		// Start output buffering.
 		ob_start();
 
 		// Call the function.
-		wp_skeleton_custom_page_callback();
+		njw_media_custom_page_callback();
 
 		// Get the output.
 		$output = ob_get_clean();

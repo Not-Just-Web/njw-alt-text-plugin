@@ -29,6 +29,10 @@ export interface SearchResultType {
 	excerpt: {
 		rendered: string;
 	};
+	guid: {
+		rendered: string;
+	};
+	alt_text?: string;
 	slug: string;
 	link: string;
 	count: number;
@@ -50,6 +54,7 @@ export type PostTypeKey =
 	| 'recipe'
 	| 'review'
 	| 'restaurant'
+	| 'media'
 	| 'product'
 	| 'pages'
 	| 'post'
@@ -63,7 +68,7 @@ export const postTypeKeys: PostTypeKey[] = [
 	'page',
 ];
 
-export const defaultType: PostTypeKey[] = ['posts', 'pages'];
+export const defaultType: PostTypeKey[] = ['media'];
 
 type PostTypes = {
 	[K in PostTypeKey]?: PostData;

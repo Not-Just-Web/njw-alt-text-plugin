@@ -1,7 +1,7 @@
 {
   "name": "react-plugin-skeleton",
   "version": "1.2.0",
-  "description": "A wordpress plugin skeleton build in react and typescript.",
+  "description": "A wordpress plugin to auto generate the Alt text",
   "scripts": {
     "preinstall": "composer install",
     "prepare": "git config core.hooksPath ./git-hooks",
@@ -15,10 +15,13 @@
     "format": "npm-run-all --parallel format:*",
     "format:css": "npm run lint:css -- --fix",
     "format:ts": "wp-scripts lint-js --ext .ts,.tsx  --fix",
+	"sync:install": "brew install fswatch",
+	"sync":"./sync.sh",
     "format:php": "composer format",
     "php": "composer format",
     "start": "wp-scripts start",
     "build": "wp-scripts build",
+	"config:git-hooks": "git config core.hooksPath ./git-hooks",
     "create:block": "cd ./src/blocks && npx @wordpress/create-block --no-plugin --template njw-wp-typescript-block"
   },
   "main": "index.js",

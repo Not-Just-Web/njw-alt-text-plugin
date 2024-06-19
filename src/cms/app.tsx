@@ -8,24 +8,28 @@ import { defaultType, PostTypeKey } from '../helpers/types';
 const App: React.FC = () => {
 	const [postType, setPostType] = useState<PostTypeKey[]>(defaultType);
 	const postTypeSelect = (value: PostTypeKey[]) => {
+		// If 'media' is not in the selected items, add it back
+		if (!value.includes('media')) {
+			value.push('media');
+		}
 		setPostType(value);
 	};
 
 	const tabs = [
 		{
-			name: 'Keyword Finder',
+			name: 'Media Finder',
 			component: (
 				<>
-					<h4>Sample Search Feature</h4>
+					<h4>Post Search Feature</h4>
 					<SearchFeature supportedPostTypes={postType} />
 				</>
 			),
 		},
 		{
-			name: 'Keyword Replacer',
+			name: 'Media Bulk Update',
 			component: (
 				<>
-					<h4>Keyword to replace</h4>
+					<h4>Media - Bulk Update</h4>
 					<p>Coming soon</p>
 				</>
 			),
@@ -35,8 +39,8 @@ const App: React.FC = () => {
 	return (
 		<>
 			<WelcomePanel
-				title="Welcome to Wp Skeleton React Plugin"
-				description="This is a plugin to help you find and replace keywords in your content."
+				title="Welcome to NJW Media - Alt text  generator"
+				description="This is a plugin to help you search media library and generate alt text for the media using generative AI."
 			/>
 			<div className="mx-1">
 				<div>

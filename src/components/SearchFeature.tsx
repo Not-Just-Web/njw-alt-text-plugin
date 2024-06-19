@@ -15,7 +15,7 @@ const SearchFeature: React.FC<SearchFeatureProps> = ({
 	supportedPostTypes = defaultType,
 }) => {
 	const [searchTerm, setSearchTerm] = useState<string>('');
-	const [resultInitiate, setResultInitiate] = useState<boolean>(false);
+	const [resultInitiate, setResultInitiate] = useState<boolean>(true);
 
 	const baseUrl = getUrlForSite(defaultSite);
 

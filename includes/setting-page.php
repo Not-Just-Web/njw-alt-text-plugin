@@ -6,8 +6,8 @@
  * @since 1.0.0
  */
 
-add_action( 'admin_menu', 'njw_skeleton__add_admin_menu' );
-add_action( 'admin_init', 'njw_skeleton__settings_init' );
+add_action( 'admin_menu', 'njw_media__add_admin_menu' );
+add_action( 'admin_init', 'njw_media__settings_init' );
 
 
 /**
@@ -18,8 +18,8 @@ add_action( 'admin_init', 'njw_skeleton__settings_init' );
  *
  * @since 1.0.0
  */
-function njw_skeleton__add_admin_menu() {
-	add_options_page( 'NJW Skeleton', 'NJW Skeleton', 'manage_options', 'njw_skeleton', 'njw_skeleton__options_page' );
+function njw_media__add_admin_menu() {
+	add_options_page( 'NJW Skeleton', 'NJW Skeleton', 'manage_options', 'njw_skeleton', 'njw_media__options_page' );
 }
 
 
@@ -31,17 +31,17 @@ function njw_skeleton__add_admin_menu() {
  *
  * @since 1.0.0
  */
-function njw_skeleton__settings_init() {
+function njw_media__settings_init() {
 
-	register_setting( 'NJW_Skeleton_Plugin_page', 'njw_skeleton__settings' );
-	register_setting( 'NJW_Skeleton_Plugin_page', 'njw_skeleton__api-settings' );
+	register_setting( 'njw_media_Plugin_page', 'njw_media__settings' );
+	register_setting( 'njw_media_Plugin_page', 'njw_media__api-settings' );
 
 
 	add_settings_section(
-		'NJW_Skeleton_Plugin_page_section',
-		__( 'NJW Skeleton - Settings ', 'njw-skeleton' ),
-		'njw_skeleton__settings_section_callback',
-		'NJW_Skeleton_Plugin_page',
+		'njw_media_Plugin_page_section',
+		__( 'NJW Skeleton - Settings ', 'njw-media' ),
+		'njw_media__settings_section_callback',
+		'njw_media_Plugin_page',
 	);
 }
 
@@ -53,8 +53,8 @@ function njw_skeleton__settings_init() {
  *
  * @since 1.0.0
  */
-function njw_skeleton__settings_section_callback() {
-	njw_skeleton_options_settings_field();
+function njw_media__settings_section_callback() {
+	njw_media_options_settings_field();
 }
 
 /**
@@ -65,19 +65,20 @@ function njw_skeleton__settings_section_callback() {
  *
  * @since 1.0.0
  */
-function njw_skeleton_options_settings_field() {
+function njw_media_options_settings_field() {
 
-	$config_value = njw_skeleton_api_config();
+	$config_value = njw_media_api_config();
 
 	$api_config_constant_name = [
 		'API_PROXY_URL' => 'API Proxy URl',
+		'SECRET_KEY'    => 'Secret Key ( GPT4Vision or Replicate API key )',
 	];
 
 	?>
-	<div class="njw-skeleton-config">
+	<div class="njw-media-config">
 		<?php foreach ( $api_config_constant_name as $constant => $constant_label ) : ?>
 			<?php
-				$setting_name = njw_skeleton_api_config( 'SETTINGS_NAME' );
+				$setting_name = njw_media_api_config( 'SETTINGS_NAME' );
 				$current_name = $setting_name . '[' . $constant . ']';
 			?>
 			<div class="njw-skl-field <?php echo esc_attr( $constant ); ?>">
@@ -100,14 +101,14 @@ function njw_skeleton_options_settings_field() {
  *
  * @since 1.0.0
  */
-function njw_skeleton__options_page() {
+function njw_media__options_page() {
 	?>
-		<div class="njw-skeleton-setting-page">
+		<div class="njw-media-setting-page">
 			<form action='options.php' method='post'>
 
 				<?php
-				settings_fields( 'NJW_Skeleton_Plugin_page' );
-				do_settings_sections( 'NJW_Skeleton_Plugin_page' );
+				settings_fields( 'njw_media_Plugin_page' );
+				do_settings_sections( 'njw_media_Plugin_page' );
 				submit_button();
 				?>
 

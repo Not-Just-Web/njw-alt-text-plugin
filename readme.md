@@ -1,13 +1,13 @@
-# React Plugin Skeleton Plugin for Wordpress
+# Wordpress Alt Text Plugin for Wordpress
 
-React Plugin Skeleton is a WordPress plugin skeleton or starter block built using TypeScript, ANTD design, and React Query. 
+Wordpress Alt Text is a WordPress plugin that can auto generate al text for image and is built using TypeScript, ANTD design, and React Query. 
 
 ## Installation
 
 1. Clone the repository:
 
 	```bash
-	git clone https://github.com/snj-adhikari/wp-react-plugin-skeleton.git
+	git clone https://github.com/Not-Just-Web/njw-alt-text-plugin.git
 	```
 2. Prepare Git Hook
 
@@ -30,7 +30,7 @@ React Plugin Skeleton is a WordPress plugin skeleton or starter block built usin
 
 
 ## Usage
-- Using React Plugin Skeleton plugin, you can find keywords in the content and make changes based on those keywords on the frontend.
+- Using Wordpress Alt Text plugin, you can generate alt text for the image using GPT4Vision or custom AI.
 
 ### Available Scripts
 
@@ -53,4 +53,6 @@ All available scripts on this repo :
 - `start`: Starts the development server using `wp-scripts`.
 - `build`: Builds the project for production using `wp-scripts`.
 - `create:block`: Creates a new block in the `./src/blocks` directory using `@wordpress/create-block`.
+- `sync:install`: it installs `fwatch` using brew on mac that helps to synchronize this folder with targeted plugin directory.
+- `sync` : Example : `npm run sync -- /path/to/plugin/folder` executes `.sync.sh` file to create symbolic link to targeted wordpress plugin folder.
 
