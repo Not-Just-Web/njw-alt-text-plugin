@@ -23,8 +23,8 @@ WP_Mock::userFunction(
 WP_Mock::userFunction(
 	'plugin_dir_url',
 	[
-		'return' => '/wp-content/plugins/wp-react-plugin-skeleton/',
+		'return' => '/wp-content/plugins/njw-alt-text-plugin/',
 	]
 );
 
-require_once __DIR__ . '/wp-react-plugin-skeleton.php';
+require_once __DIR__ . '/njw-alt-text-plugin.php';

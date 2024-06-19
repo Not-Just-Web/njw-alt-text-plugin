@@ -1,7 +1,7 @@
 {
-	"name":"snj-adhikari/wp-react-plugin-skeleton",
+	"name":"NotJustWeb/njw-alt-text-plugin",
 	"type" : "wordpress-plugin",
-	"description": "React Plugin Skeleton starter kit with all lint and test setup",
+	"description": "A WordPress plugin to add alt text to images in the media library",
 	"version": "1.0.0",
 	"license": "proprietary",
 	"prefer-stable": true,
