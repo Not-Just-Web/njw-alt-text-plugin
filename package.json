@@ -1,5 +1,5 @@
 {
-  "name": "notjustweb/njw-alt-text-plugin",
+  "name": "njw-alt-text-plugin",
   "version": "1.2.0",
   "description": "A wordpress plugin to auto generate the Alt text",
   "scripts": {
