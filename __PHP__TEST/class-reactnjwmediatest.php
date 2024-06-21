@@ -73,7 +73,7 @@ class ReactNjwMediaTest extends TestCase {
 		->with( 'njw-media-frontend-style', njw_media_get_config( 'PLUGIN_DIR_URL' ) . 'dist/frontend.css', $asset_file['dependencies'], $asset_file['version'] )
 		->andReturnUsing(
 			function ( $arg1, $arg2, $arg3, $arg4 ) use ( $asset_file ) {
-				$this->assertEquals( 'frontend-style', $arg1 );
+				$this->assertEquals( 'njw-frontend-style', $arg1 );
 				$this->assertEquals( $asset_file['dependencies'], $arg3 );
 				$this->assertEquals( $asset_file['version'], $arg4 );
 				$this->assertEquals( njw_media_get_config( 'PLUGIN_DIR_URL' ) . 'dist/frontend.css', $arg2 );
@@ -110,10 +110,10 @@ class ReactNjwMediaTest extends TestCase {
 			[
 				'times' => 1,
 				'args'  => [
-					'WP Skeleton React',
-					'WP Skeleton React',
-					'edit_posts',
-					'wp-skeleton-page',
+					'NJW Media',
+					'NJW Media',
+					'edit_posts',  // This is the capability so that editor role can access this page.
+					'njw-wp-media',
 					'njw_media_custom_page_callback',
 					'dashicons-analytics',
 					4,
