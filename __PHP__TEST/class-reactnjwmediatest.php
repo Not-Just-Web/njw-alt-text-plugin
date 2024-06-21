@@ -143,6 +143,6 @@ class ReactNjwMediaTest extends TestCase {
 		$output = ob_get_clean();
 
 		// Check the output.
-		$this->assertEquals( '<div id="skeleton-react-plugin-page"></div>', $output );
+		$this->assertEquals( '<div id="njw-media-react-plugin-page"></div>', $output );
 	}
 }
