@@ -105,6 +105,14 @@ add_action(
 				'permission_callback' => function () {
 					return current_user_can( 'manage_options' );
 				},
+				'args'                => [
+					'mediaUrl' => [
+						'required'          => false, // Change to true if the parameter is required.
+						'validate_callback' => function ( $param ) {
+							return is_string( $param );
+						},
+					],
+				],
 			]
 		);
 	}
@@ -301,15 +309,17 @@ function njw_update_media_alt_text( $request ) {
  * @return string|WP_Error The generated alt text or an error.
  */
 function njw_media_get_alt_text_from_open_ai( WP_REST_Request $request ) {
-	$media_id = $request->get_param( 'media_id' );
+	$media_id        = $request->get_param( 'media_id' );
+	$media_url_param = $request->get_param( 'mediaUrl' );
 
 	if ( empty( $open_ai_key ) ) {
 		return new WP_Error( 'no_openai_key', 'Open AI Key not found in headers', [ 'status' => 401 ] );
 	}
 
 	// Get media URL using media ID.
-	$media_url     = wp_get_attachment_url( $media_id );
-	$prev_alt_text = get_post_meta( $media_id, '_wp_attachment_image_alt', true );
+	$attachment_url = wp_get_attachment_url( $media_id );
+	$prev_alt_text  = get_post_meta( $media_id, '_wp_attachment_image_alt', true );
+	$media_url      = ! empty( $media_url_param ) ? $media_url_param : $attachment_url;
 
 	if ( empty( $media_url ) ) {
 		return new WP_Error( 'no_media_url', 'Media URL not found for the given media ID', [ 'status' => 404 ] );
