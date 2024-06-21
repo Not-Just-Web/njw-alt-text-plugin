@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { ErrorType, QueryResult, QueryParamTypes } from '../helpers/types';
 import { useQuery } from 'react-query';
 import { sendGetRequest } from '../helpers/api';
-import { Table, Typography } from 'antd';
 import {
 	getApiEndpoint,
 	replacePostType,
@@ -10,6 +9,7 @@ import {
 import Exporter from './Exporter';
 
 import { generateTableColumns } from './Columns';
+import CustomTable from './CustomTable';
 
 type SearchResultsProps = {
 	postType: string;
@@ -53,8 +53,6 @@ const SearchResults: React.FC<SearchResultsProps> = ({
 		return sendGetRequest(SEARCH_RESULTS_URL, param)
 	});
 
-	const { Text } = Typography;
-
 	useEffect(() => {
 		refetch();
 	}, [page, keyword, perPage, sortField, sortOrder]);
@@ -73,8 +71,8 @@ const SearchResults: React.FC<SearchResultsProps> = ({
 		baseUrl,
 		page
 	);
-	const totalResults = header ? header.get('x-wp-total') : 0;
-	const totalPages = header ? header.get('x-wp-totalpages') : 0;
+	const totalResults: number = header ? header.get('x-wp-total') : 0;
+	const totalPages: number  = header ? header.get('x-wp-totalpages') : 0;
 	const exportKeys = ['id', 'link', 'title', 'date', 'edit_link'];
 
 	const formattedKeyword = keyword.replace(/\s/g, '_');
@@ -82,65 +80,36 @@ const SearchResults: React.FC<SearchResultsProps> = ({
 	const fileName = `${postType}_${formattedKeyword}--FOUND_${currentDate}`;
 
 	return (
-		<div className="mt-2">
-			<hr />
-			{error && <div className="error">Error: {error.message}</div>}
-			{ isLoading && <div className="loading">Loading...</div>}
-			<h2> {postType.charAt(0).toUpperCase() + postType.slice(1)} </h2>
-			{!isLoading && (
-				<>
-					<div className="card mx-auto p-1 my-2">
-						<div className="flex">
-							<div className="mr-2 ">
-								{' '}
-								Total Results:{' '}
-								<Text type="success">{totalResults}</Text>{' '}
-							</div>
-							<div className="ml-2">
-								{' '}
-								Total Pages:{' '}
-								<Text type="danger">{totalPages} </Text>{' '}
-							</div>
-						</div>
-					</div>
-				</>
-			)}
-
-			<Table
-				dataSource={searchData}
-				loading={isLoading || isFetching}
-				columns={columns}
-				pagination={{
-					total: totalResults,
-					pageSize: perPage,
-					showSizeChanger: true,
-					pageSizeOptions: pageSizes,
-					onChange: (cpage: number) => {
-						setPage(cpage);
-					},
-					onShowSizeChange: (current: number, size: number) => {
-						setPerPage(size);
-					},
-				}}
-				footer={() =>
-					searchData && searchData.length ? (
-						<Exporter
-							exportKeys={exportKeys}
-							fileName={fileName}
-							baseUrl={baseUrl}
-							queryKey="searchResults"
-							totalPages={totalPages}
-							url={SEARCH_RESULTS_URL}
-							params={{ search: keyword, per_page: perPage, orderby: sortField, order: sortOrder}}
-						/>
-					) : (
-						''
-					)
-				}
-				rowKey="id"
-			/>
-		</div>
-	);
+		<CustomTable
+			error = {error}
+			isLoading = {isLoading}
+			postType = {postType}
+			totalResults = {totalResults}
+			totalPages = {totalPages}
+			searchData = {searchData}
+			isFetching = {isFetching}
+			columns={columns}
+			perPage = {perPage}
+			pageSizes = {pageSizes}
+			setPage = {setPage}
+			setPerPage = {setPerPage}
+			footer = {() =>
+				searchData && searchData.length ? (
+					<Exporter
+						exportKeys={exportKeys}
+						fileName={fileName}
+						baseUrl={baseUrl}
+						queryKey="searchResults"
+						totalPages={totalPages}
+						url={SEARCH_RESULTS_URL}
+						params={{ search: keyword, per_page: perPage, orderby: sortField, order: sortOrder}}
+					/>
+				) : (
+					''
+				)
+			}
+		/>
+	)
 };
 
 export default SearchResults;

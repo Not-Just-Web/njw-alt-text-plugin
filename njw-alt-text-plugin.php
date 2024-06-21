@@ -20,9 +20,11 @@ require $plugin_dir_path . 'includes/config.php';
 // Register the config.
 njw_media_define_constant_with_prefix( 'PLUGIN_DIR_PATH', $plugin_dir_path );
 njw_media_define_constant_with_prefix( 'PLUGIN_DIR_URL', $plugin_dir_url );
-njw_media_define_constant_with_prefix( 'PLUGIN_FILE_NAME', $plugin_dir_path );
+njw_media_define_constant_with_prefix( 'PLUGIN_FILE_NAME', $file_path );
 
 require $plugin_dir_path . 'includes/helpers.php';
+require $plugin_dir_path . 'includes/database.php';
 require $plugin_dir_path . 'includes/activation.php';
 require $plugin_dir_path . 'includes/setting-page.php';
+require $plugin_dir_path . 'includes/open-ai.php';
 require $plugin_dir_path . 'includes/api.php';

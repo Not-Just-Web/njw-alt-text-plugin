@@ -11,11 +11,15 @@ TARGET_DIRECTORY=$(realpath $1)
 # Get the name of the current directory
 SOURCE_DIRECTORY_NAME=$(basename $PWD)
 
-# Create the target subdirectory if it doesn't exist
-mkdir -p "$TARGET_DIRECTORY/$SOURCE_DIRECTORY_NAME"
-
-# Print the new destination directory
-echo "New destination directory: $TARGET_DIRECTORY/$SOURCE_DIRECTORY_NAME"
+# Check if the target subdirectory already exists
+if [ ! -d "$TARGET_DIRECTORY/$SOURCE_DIRECTORY_NAME" ]; then
+    # Create the target subdirectory if it doesn't exist
+    mkdir -p "$TARGET_DIRECTORY/$SOURCE_DIRECTORY_NAME"
+	# Print the new destination directory
+	echo "New destination directory: $TARGET_DIRECTORY/$SOURCE_DIRECTORY_NAME"
+else
+    echo "Directory $TARGET_DIRECTORY/$SOURCE_DIRECTORY_NAME already exists. Syncing."
+fi
 
 # Use rsync to sync the current directory to the target subdirectory
 rsync -a "$PWD/" "$TARGET_DIRECTORY/$SOURCE_DIRECTORY_NAME"
@@ -24,6 +28,5 @@ rsync -a "$PWD/" "$TARGET_DIRECTORY/$SOURCE_DIRECTORY_NAME"
 fswatch -o . | while read f; do
   echo "File changed: $f"
   # Sync the directories again after a change
-  rsync -a "$PWD/" "
-  TARGET_DIRECTORY/$SOURCE_DIRECTORY_NAME"
+  rsync -a "$PWD/" "$TARGET_DIRECTORY/$SOURCE_DIRECTORY_NAME"
 done

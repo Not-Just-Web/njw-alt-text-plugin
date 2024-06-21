@@ -16,6 +16,19 @@ export type QueryParamTypes = {
 	order?: 'asc' | 'desc';
 };
 
+export interface CustomWindow extends Window {
+	wp: any;
+}
+
+export interface MediaType {
+	length: number;
+	url: string;
+	id: number;
+}
+
+export interface RenderProps {
+	open: () => void;
+}
 
 export interface SearchResultType {
 	id: number;

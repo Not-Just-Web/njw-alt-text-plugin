@@ -13,6 +13,7 @@ export const defaultReactQueryOption = {
 	},
 };
 
+const pluginApiUrl = '/wp-json/wp/v2/njw-media/v1';
 export const apiEndpoint: apiEndpointType[] = [
 	{
 		method: 'GET',
@@ -34,6 +35,11 @@ export const apiEndpoint: apiEndpointType[] = [
 		name: 'admin_edit_url',
 		prefix: '/wp-admin/post.php?post=<post_id>&action=edit',
 	},
+	{
+		method: 'post',
+		name: 'open_ai_alt_text',
+		prefix: pluginApiUrl + '/openai/generate/<media_id>',
+	}
 ];
 
 // Define the list of URLs with site names
@@ -62,6 +68,10 @@ export const replaceUrl = (url: string, search: string, replace: string) => {
 
 export const replacePostType = (url: string, postType: string) => {
 	return replaceUrl(url, '<post_type>', postType);
+};
+
+export const replaceMediaId = (url: string, mediaId: string) => {
+	return replaceUrl(url, '<media_id>', mediaId);
 };
 
 export const replacePostId = (url: string, postId: number) => {

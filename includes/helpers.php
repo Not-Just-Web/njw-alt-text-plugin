@@ -74,6 +74,7 @@ function njw_media_api_config() {
 	$default_option = [
 		'API_PROXY_URL'  => get_site_url() . '/wp-json/' . njw_media_get_config( 'NAMESPACE' ) . '/' . njw_media_get_config( 'ROUTE' ) . '/',
 		'API_ACCESS_KEY' => '',
+		'PROMPT'         => njw_media_get_config( 'AI_PROMPT' ),
 	];
 
 	$am_tr_options = get_option( njw_media_get_config( 'SETTINGS_NAME' ) ); // get the data from the plugin setting page.
@@ -83,6 +84,21 @@ function njw_media_api_config() {
 	return ! empty( $return_option ) && is_array( $return_option ) ? $return_option : $default_option;
 }
 
+/**
+ * Method njw_get_single_option
+ *
+ * @param string $key --> key to get the value.
+ * @param string $default_value --> default_value value if key not found.
+ * @return string | array -> based on passed text.
+ */
+function njw_get_single_option( $key, $default_value = '' ) {
+	$options = njw_media_api_config();
+	if ( array_key_exists( $key, $options ) ) {
+		return $options[ $key ];
+	} else {
+		return $default_value;
+	}
+}
 
 /**
  * Logs a custom message.

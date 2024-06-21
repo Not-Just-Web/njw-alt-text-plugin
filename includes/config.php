@@ -26,7 +26,10 @@ function njw_media_define_constant_with_prefix( $constant_name, $value ) {
 njw_media_define_constant_with_prefix( 'NAMESPACE', 'njw-media' ); // Prefix starts with `njw_media_'.
 njw_media_define_constant_with_prefix( 'PROXY_ROUTE', 'v1/proxy' ); // Prefix starts with `njw_media_' .
 njw_media_define_constant_with_prefix( 'ROUTE', 'v1' ); // Prefix starts with `njw_media_' .
-njw_media_define_constant_with_prefix( 'SETTINGS_NAME', 'am-trx-settings' ); // Prefix starts with `njw_media_' .
+njw_media_define_constant_with_prefix( 'SETTINGS_NAME', 'njw-alt-settings' ); // Prefix starts with `njw_media_' .
+njw_media_define_constant_with_prefix( 'LINK_TABLE_LOG', 'njw_link_log' ); // Prefix starts with `njw_media_' .
+njw_media_define_constant_with_prefix( 'ALT_TABLE_LOG', 'njw_alt_log' ); // Prefix starts with `njw_media_' .
+njw_media_define_constant_with_prefix( 'AI_PROMPT', 'Please provide the alt text (to be used on html img tag) for this image, also use provided image url or article slug to determine character name, movies or any to get relevant info if any ensuring it describes the image for individuals who cannot see it. Only report output on plain text and make it precise and maximum 125 character.' ); // Prefix starts with `njw_media_' .
 
 
 

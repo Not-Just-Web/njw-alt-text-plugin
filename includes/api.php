@@ -79,7 +79,7 @@ add_action(
 				'methods'             => [ 'POST' ],
 				'callback'            => 'njw_media_search_replace',
 				'permission_callback' => function () {
-					return current_user_can( 'manage_options' );
+					return current_user_can( 'edit_posts' );
 				},
 			]
 		);
@@ -89,7 +89,19 @@ add_action(
 			njw_media_get_config( 'ROUTE' ) . '/alt-meta-update',
 			[
 				'methods'             => 'POST',
-				'callback'            => 'update_media_alt_text',
+				'callback'            => 'njw_update_media_alt_text',
+				'permission_callback' => function () {
+					return current_user_can( 'manage_options' );
+				},
+			]
+		);
+
+		register_rest_route(
+			njw_media_get_config( 'NAMESPACE' ),
+			njw_media_get_config( 'ROUTE' ) . '/openai/generate/(?P<media_id>\d+)',
+			[
+				'methods'             => 'GET',
+				'callback'            => 'njw_media_get_alt_text_from_open_ai',
 				'permission_callback' => function () {
 					return current_user_can( 'manage_options' );
 				},
@@ -216,11 +228,24 @@ function njw_media_search_replace( $request ) {
 	// phpcs:ignore
 	exec( $command, $output, $return_code );
 
+	$alt_response = [
+		'old_link' => $search,
+		'new_link' => $replace,
+	];
+
 	if ( $return_code !== 0 ) {
 		return new WP_Error( 'command_failed', 'Failed to run WP CLI search replace command.', [ 'status' => 500 ] );
 	}
 
-	return new WP_REST_Response( $output, 200 );
+	njw_media_save_log( $alt_text_response, 'old_link', 'LINK' );
+
+	return wp_send_json(
+		[
+			...$alt_response,
+			'output' => $output,
+		],
+		200
+	);
 }
 
 
@@ -244,13 +269,66 @@ function njw_update_media_alt_text( $request ) {
 	if ( empty( $media_id ) || empty( $alt_text ) ) {
 		return new WP_Error( 'invalid_params', 'Media ID and alt text are required.', [ 'status' => 400 ] );
 	}
-
+	$prev_alt_text = get_post_meta( $media_id, '_wp_attachment_image_alt', true );
 	// Update media alt text.
 	$updated = update_post_meta( $media_id, '_wp_attachment_image_alt', $alt_text );
 
+	$media_url = wp_get_attachment_url( $media_id );
+
+	$alt_text_response = [
+		'media_id'     => $media_id,
+		'media_url'    => $media_url,
+		'old_alt'      => $prev_alt_text,
+		'new_alt_text' => $alt_text,
+	];
+
+	njw_media_save_log( $alt_text_response, 'media_id', 'MEDIA' );
+
 	if ( $updated ) {
-		return new WP_REST_Response( 'Media alt text updated successfully.', 200 );
+		return wp_json_send( $alt_text_response, 200 );
 	} else {
 		return new WP_Error( 'update_failed', 'Failed to update media alt text.', [ 'status' => 500 ] );
 	}
+}
+
+/**
+ * Get alt text from OpenAI.
+ *
+ * @since 1.0.0
+ *
+ * @param WP_REST_Request $request The WordPress REST request object.
+ *
+ * @return string|WP_Error The generated alt text or an error.
+ */
+function njw_media_get_alt_text_from_open_ai( WP_REST_Request $request ) {
+	$media_id = $request->get_param( 'media_id' );
+
+	if ( empty( $open_ai_key ) ) {
+		return new WP_Error( 'no_openai_key', 'Open AI Key not found in headers', [ 'status' => 401 ] );
+	}
+
+	// Get media URL using media ID.
+	$media_url     = wp_get_attachment_url( $media_id );
+	$prev_alt_text = get_post_meta( $media_id, '_wp_attachment_image_alt', true );
+
+	if ( empty( $media_url ) ) {
+		return new WP_Error( 'no_media_url', 'Media URL not found for the given media ID', [ 'status' => 404 ] );
+	}
+
+	$alt_text = njw_get_image_alt_from_open_ai( $media_url );
+
+	if ( empty( $alt_text ) ) {
+		return new WP_Error( 'no_alt_text', "Wasn't able to generate alt text for the image.", [ 'status' => 404 ] );
+	}
+
+	$alt_text_response = [
+		'media_id'     => $media_id,
+		'media_url'    => $media_url,
+		'old_alt'      => $prev_alt_text,
+		'new_alt_text' => $alt_text,
+	];
+
+	njw_media_save_log( $alt_text_response, 'media_id', 'MEDIA' );
+
+	return wp_send_json( $alt_text_response, 200 );
 }

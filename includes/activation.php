@@ -65,7 +65,7 @@ add_action( 'admin_enqueue_scripts', 'njw_media_enqueue_admin_assets' );
  */
 function njw_media_enqueue_cms_page_assets() {
 	// phpcs:ignore
-	if ( isset( $_GET['page'] ) && $_GET['page'] === 'wp-skeleton-page' ) {
+	if ( isset( $_GET['page'] ) && $_GET['page'] === 'njw-wp-media' ) {
 		$asset_file_path = njw_media_get_config( 'PLUGIN_DIR_PATH' ) . 'dist/cms.asset.php';
 		$asset_file      = [
 			'dependencies' => [],
@@ -75,6 +75,7 @@ function njw_media_enqueue_cms_page_assets() {
 		if ( file_exists( $asset_file_path ) ) {
 			$asset_file = include $asset_file_path;
 		}
+		wp_enqueue_media();
 		wp_enqueue_script( 'njw-media-cms-script', njw_media_get_config( 'PLUGIN_DIR_URL' ) . 'dist/cms.js', $asset_file['dependencies'], $asset_file['version'], true );
 		wp_enqueue_style( 'njw-media-cms-style', njw_media_get_config( 'PLUGIN_DIR_URL' ) . 'dist/cms.css', [], $asset_file['version'] );
 	}
@@ -129,7 +130,7 @@ function njw_media_add_custom_menu_page() {
 		'NJW Media',
 		'NJW Media',
 		'edit_posts',  // This is the capability so that editor role can access this page.
-		'wp-skeleton-page',
+		'njw-wp-media',
 		'njw_media_custom_page_callback',
 		'dashicons-analytics',
 		4
@@ -149,3 +150,34 @@ function njw_media_custom_page_callback() {
 	echo '<div id="njw-media-react-plugin-page"></div>';
 	// Add your custom page content here.
 }
+
+
+/**
+ * Customizes the allowed file types for upload.
+ *
+ * @param array $mimes The array of allowed file types.
+ * @return array The modified array of allowed file types.
+ */
+function njw_media_upload_mimes( $mimes = [] ) {
+	// Add csv file type.
+	$mimes['csv'] = 'text/csv';
+
+	return $mimes;
+}
+// phpcs:ignore
+add_filter( 'upload_mimes', 'njw_media_upload_mimes' );
+
+
+/**
+ * Function named njw_media_plugin_activation.
+ *
+ * Plugin activation hooks to achieve things to do when plugin is activated.
+ *
+ * @return void
+ */
+function njw_media_plugin_activation() {
+	njw_create_link_log_table(); // create  link log table.
+	njw_create_media_log_table(); // create media log table.
+}
+
+register_activation_hook( njw_media_get_config( 'PLUGIN_FILE_NAME' ), 'njw_media_plugin_activation' );

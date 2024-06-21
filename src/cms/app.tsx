@@ -4,6 +4,7 @@ import SearchFeature from '../components/SearchFeature';
 import WelcomePanel from '../components/WelcomePanel';
 import PostTypeSelector from '../components/PostTypeSelector';
 import { defaultType, PostTypeKey } from '../helpers/types';
+import MediaBulkUpdate from '../components/MediaBulkUpdate';
 
 const App: React.FC = () => {
 	const [postType, setPostType] = useState<PostTypeKey[]>(defaultType);
@@ -20,7 +21,7 @@ const App: React.FC = () => {
 			name: 'Media Finder',
 			component: (
 				<>
-					<h4>Post Search Feature</h4>
+					<h3>Post Search Feature</h3>
 					<SearchFeature supportedPostTypes={postType} />
 				</>
 			),
@@ -29,8 +30,8 @@ const App: React.FC = () => {
 			name: 'Media Bulk Update',
 			component: (
 				<>
-					<h4>Media - Bulk Update</h4>
-					<p>Coming soon</p>
+					<h3>Bulk Update </h3>
+					<MediaBulkUpdate />
 				</>
 			),
 		},
