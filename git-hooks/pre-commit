@@ -1,4 +1,4 @@
-rm -rf dist/
+npm run format
 npm exec lint-staged
 npm run build
 git add dist/*

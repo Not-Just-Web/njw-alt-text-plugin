@@ -5,23 +5,21 @@ import { Select, Button } from 'antd';
 import CustomMediaUpload from './CustomMediaUpload';
 import { sendGetRequest } from '../helpers/api';
 import {
-	getApiEndpoint, replaceMediaId
+	getApiEndpoint, replaceMediaId, defaultSite, getUrlForSite
 } from '../helpers/conf';
 
 const { Option } = Select;
 
 type MediaBulkUpdateProps = {
-	baseUrl: string;
+	baseUrl?: string;
 }
 
-const MediaBulkUpdate = ({baseUrl}: MediaBulkUpdateProps) => {
+const MediaBulkUpdate = ({baseUrl = getUrlForSite(defaultSite) }: MediaBulkUpdateProps) => {
 	const [mediaIdColumn, setMediaIdSelect] = useState<string | null>(null);
 	const [mediaUrlColumn, setMediaUrlSelect] = useState<string | null>(null);
 	const [csvData, setCsvData] = useState<any[]>([]);
 	const [columns, setColumns] = useState<string[]>([]);
 	const [csvUrl, setCsvUrl] = useState<string>('');
-
-	const altTextApi = replaceMediaId( getApiEndpoint('open_ai_alt_text', baseUrl));
 
 	const handleMediaIdSelect = (value: string) => {
 		setMediaIdSelect(value);
@@ -56,8 +54,11 @@ const MediaBulkUpdate = ({baseUrl}: MediaBulkUpdateProps) => {
 
 		const processedData = [];
 		for (const row of csvData.slice(0, 4)) {
-			const response = await queryClient.fetchQuery(['media', row], () => sendGetRequest(altTextApi, { }));
-			processedData.push(response);
+			if (mediaIdColumn !== null) { // Check if mediaIdColumn is not null
+				const altTextApi = replaceMediaId(getApiEndpoint('open_ai_alt_text', baseUrl), row[mediaIdColumn]);
+				const response = await queryClient.fetchQuery(['media', row], () => sendGetRequest(altTextApi, {}));
+				processedData.push(response);
+			}
 		}
 
 		console.log('Processed Data:', processedData);

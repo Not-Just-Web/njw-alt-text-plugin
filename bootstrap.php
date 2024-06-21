@@ -27,4 +27,11 @@ WP_Mock::userFunction(
 	]
 );
 
+WP_Mock::userFunction(
+	'register_activation_hook',
+	[
+		'return' => true,
+	]
+);
+
 require_once __DIR__ . '/njw-alt-text-plugin.php';

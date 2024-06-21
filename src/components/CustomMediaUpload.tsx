@@ -1,6 +1,6 @@
-import React, { useEffect, useState} from 'react';
+import React, { useEffect} from 'react';
 import { Button } from 'antd';
-import { CustomWindow, MediaType, RenderProps } from '../helpers/types';
+import { CustomWindow } from '../helpers/types';
 
 declare let window: CustomWindow;
 
@@ -9,8 +9,7 @@ export type CustomMediaUploadProps = {
 }
 
 const CustomMediaUpload: React.FC<CustomMediaUploadProps> = ( {setCsvUrl}) => {
-	const [mediaId, setMediaId] = React.useState<number | undefined>(undefined);
-	const ALLOWED_MEDIA_TYPES: Array<string> = [ 'text/csv' ];
+
 	useEffect(() => {
 		if (typeof window.wp === 'undefined' || typeof window.wp.media === 'undefined') {
 			console.error('The WordPress media library is not available.');
