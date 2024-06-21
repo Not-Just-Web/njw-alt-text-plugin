@@ -57,10 +57,10 @@ class ReactNjwMediaTest extends TestCase {
 
 		WP_Mock::userFunction( 'wp_enqueue_script' )
 		->once()
-		->with( 'njw-mediafrontend-script', njw_media_get_config( 'PLUGIN_DIR_URL' ) . 'dist/frontend.js', $asset_file['dependencies'], $asset_file['version'], true )
+		->with( 'njw-media-frontend-script', njw_media_get_config( 'PLUGIN_DIR_URL' ) . 'dist/frontend.js', $asset_file['dependencies'], $asset_file['version'], true )
 		->andReturnUsing(
 			function ( $arg1, $arg2, $arg3, $arg4, $arg5 ) use ( $asset_file ) {
-				$this->assertEquals( 'frontend-script', $arg1 );
+				$this->assertEquals( 'njw-media-frontend-script', $arg1 );
 				$this->assertEquals( njw_media_get_config( 'PLUGIN_DIR_URL' ) . 'dist/frontend.js', $arg2 );
 				$this->assertEquals( $asset_file['dependencies'], $arg3 );
 				$this->assertEquals( $asset_file['version'], $arg4 );
@@ -73,7 +73,7 @@ class ReactNjwMediaTest extends TestCase {
 		->with( 'njw-media-frontend-style', njw_media_get_config( 'PLUGIN_DIR_URL' ) . 'dist/frontend.css', $asset_file['dependencies'], $asset_file['version'] )
 		->andReturnUsing(
 			function ( $arg1, $arg2, $arg3, $arg4 ) use ( $asset_file ) {
-				$this->assertEquals( 'njw-frontend-style', $arg1 );
+				$this->assertEquals( 'njw-media-frontend-style', $arg1 );
 				$this->assertEquals( $asset_file['dependencies'], $arg3 );
 				$this->assertEquals( $asset_file['version'], $arg4 );
 				$this->assertEquals( njw_media_get_config( 'PLUGIN_DIR_URL' ) . 'dist/frontend.css', $arg2 );
