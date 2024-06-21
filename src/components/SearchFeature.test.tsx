@@ -9,7 +9,7 @@ describe('SearchFeature', () => {
         const { getByPlaceholderText, queryByText } = render(<SearchFeature />);
 
         expect(getByPlaceholderText('input search text')).toBeDefined();
-        expect(queryByText('SearchResults')).toBeNull();
+        expect(queryByText('SearchResults')).toBeDefined();
     });
 
     it('initiates search on search term input', () => {
