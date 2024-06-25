@@ -77033,7 +77033,11 @@ const CustomMediaUpload = ({ setCsvUrl }) => {
     (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
         var _a;
         if (typeof window.wp === 'undefined' || typeof window.wp.media === 'undefined') {
+<<<<<<< HEAD
             console.error('The WordPress media library is not available.');
+=======
+            console.log('The WordPress media library is not available.');
+>>>>>>> d25852c (Minor update)
             return;
         }
         const frame = window.wp.media({
@@ -77291,8 +77295,12 @@ const { Option } = antd__WEBPACK_IMPORTED_MODULE_6__["default"];
 const MediaBulkUpdate = ({ baseUrl = (0,_helpers_conf__WEBPACK_IMPORTED_MODULE_5__.getUrlForSite)(_helpers_conf__WEBPACK_IMPORTED_MODULE_5__.defaultSite) }) => {
     const [mediaIdColumn, setMediaIdSelect] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
     const [mediaUrlColumn, setMediaUrlSelect] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+<<<<<<< HEAD
     const [mediaLength, setMediaLength] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(10);
     const [responseData, setResponseData] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
+=======
+    const [mediaLength, setMediaLength] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(5);
+>>>>>>> d25852c (Minor update)
     const [csvData, setCsvData] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
     const [columns, setColumns] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
     const [csvUrl, setCsvUrl] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)('');
@@ -77336,6 +77344,11 @@ const MediaBulkUpdate = ({ baseUrl = (0,_helpers_conf__WEBPACK_IMPORTED_MODULE_5
         console.log(csvData);
         const processedData = [];
         let loopItem = csvData;
+<<<<<<< HEAD
+=======
+        console.log('the length item:', csvData.length, mediaLength);
+        console.log('Compare:', csvData.length < mediaLength);
+>>>>>>> d25852c (Minor update)
         if (mediaLength < csvData.length) {
             loopItem = csvData.slice(0, mediaLength);
         }
@@ -77344,6 +77357,7 @@ const MediaBulkUpdate = ({ baseUrl = (0,_helpers_conf__WEBPACK_IMPORTED_MODULE_5
         for (const row of loopItem) {
             if (mediaIdColumn !== null) { // Check if mediaIdColumn is not null
                 const altTextApi = (0,_helpers_conf__WEBPACK_IMPORTED_MODULE_5__.replaceMediaId)((0,_helpers_conf__WEBPACK_IMPORTED_MODULE_5__.getApiEndpoint)('open_ai_alt_text', baseUrl), row[mediaIdColumn]);
+<<<<<<< HEAD
                 const mediaUrl = mediaUrlColumn !== null ? row[mediaUrlColumn] : '';
                 const response = await queryClient.fetchQuery(['media', row], () => (0,_helpers_api__WEBPACK_IMPORTED_MODULE_4__.sendGetRequest)(altTextApi, {
                     mediaUrl: mediaUrl || ''
@@ -77354,6 +77368,16 @@ const MediaBulkUpdate = ({ baseUrl = (0,_helpers_conf__WEBPACK_IMPORTED_MODULE_5
                 count++;
             }
         }
+=======
+                console.log('Alt Text API:', altTextApi);
+                const response = await queryClient.fetchQuery(['media', row], () => (0,_helpers_api__WEBPACK_IMPORTED_MODULE_4__.sendGetRequest)(altTextApi, {}));
+                setProgress(parseFloat(((count / loopItem.length) * 100).toFixed(2)));
+                processedData.push(response);
+                count++;
+            }
+        }
+        console.log('Processed Data:', processedData);
+>>>>>>> d25852c (Minor update)
     };
     return (react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", null,
         react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_CustomMediaUpload__WEBPACK_IMPORTED_MODULE_3__["default"], { setCsvUrl: setCsvUrl }),
@@ -77366,6 +77390,7 @@ const MediaBulkUpdate = ({ baseUrl = (0,_helpers_conf__WEBPACK_IMPORTED_MODULE_5
                 react__WEBPACK_IMPORTED_MODULE_0___default().createElement(antd__WEBPACK_IMPORTED_MODULE_7__["default"], { gutter: 16 },
                     react__WEBPACK_IMPORTED_MODULE_0___default().createElement(antd__WEBPACK_IMPORTED_MODULE_8__["default"], { span: 6, className: "select-wrapper" },
                         react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", null, "Media id Column"),
+<<<<<<< HEAD
                         react__WEBPACK_IMPORTED_MODULE_0___default().createElement(antd__WEBPACK_IMPORTED_MODULE_6__["default"], { "data-testid": "media_id_select", value: mediaIdColumn, placeholder: "Select a column for media id", onChange: handleMediaIdSelect }, columns.map((column) => (react__WEBPACK_IMPORTED_MODULE_0___default().createElement(Option, { key: column, value: column }, column))))),
                     react__WEBPACK_IMPORTED_MODULE_0___default().createElement(antd__WEBPACK_IMPORTED_MODULE_8__["default"], { span: 6, className: "select-wrapper" },
                         react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", null, "Media Url Column"),
@@ -77376,12 +77401,28 @@ const MediaBulkUpdate = ({ baseUrl = (0,_helpers_conf__WEBPACK_IMPORTED_MODULE_5
                     react__WEBPACK_IMPORTED_MODULE_0___default().createElement(antd__WEBPACK_IMPORTED_MODULE_8__["default"], { span: 6, className: "select-wrapper" },
                         react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", null, " \u00A0"),
                         (mediaIdColumn || mediaUrlColumn) && mediaLength &&
+=======
+                        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(antd__WEBPACK_IMPORTED_MODULE_6__["default"], { placeholder: "Select a column for media id", onChange: handleMediaIdSelect }, columns.map((column) => (react__WEBPACK_IMPORTED_MODULE_0___default().createElement(Option, { key: column, value: column }, column))))),
+                    react__WEBPACK_IMPORTED_MODULE_0___default().createElement(antd__WEBPACK_IMPORTED_MODULE_8__["default"], { span: 6, className: "select-wrapper" },
+                        react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", null, "Media Url Column"),
+                        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(antd__WEBPACK_IMPORTED_MODULE_6__["default"], { placeholder: "Select a column for media url", onChange: handleMediaUrlSelect }, columns.map((column) => (react__WEBPACK_IMPORTED_MODULE_0___default().createElement(Option, { key: column, value: column }, column))))),
+                    react__WEBPACK_IMPORTED_MODULE_0___default().createElement(antd__WEBPACK_IMPORTED_MODULE_8__["default"], { span: 6, className: "select-wrapper" },
+                        react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", null, " Select Limit "),
+                        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(antd__WEBPACK_IMPORTED_MODULE_6__["default"], { placeholder: "Select a column for available numbers", onChange: handleLoopNumberSelect }, availableNumber(csvData.length).map((number) => (react__WEBPACK_IMPORTED_MODULE_0___default().createElement(Option, { key: number, value: number }, number))))),
+                    react__WEBPACK_IMPORTED_MODULE_0___default().createElement(antd__WEBPACK_IMPORTED_MODULE_8__["default"], { span: 6, className: "select-wrapper" },
+                        react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", null, " \u00A0"),
+                        mediaIdColumn && mediaUrlColumn && mediaLength &&
+>>>>>>> d25852c (Minor update)
                             react__WEBPACK_IMPORTED_MODULE_0___default().createElement(antd__WEBPACK_IMPORTED_MODULE_9__["default"], { onClick: handleProcess }, "Process CSV"))),
                 progress > 0 &&
                     react__WEBPACK_IMPORTED_MODULE_0___default().createElement(antd__WEBPACK_IMPORTED_MODULE_7__["default"], null,
                         react__WEBPACK_IMPORTED_MODULE_0___default().createElement(antd__WEBPACK_IMPORTED_MODULE_8__["default"], { span: 24 },
+<<<<<<< HEAD
                             react__WEBPACK_IMPORTED_MODULE_0___default().createElement(antd__WEBPACK_IMPORTED_MODULE_10__["default"], { percent: progress })))),
         responseData && responseData.map(item => (react__WEBPACK_IMPORTED_MODULE_0___default().createElement("pre", null, JSON.stringify(item, null, 2))))));
+=======
+                            react__WEBPACK_IMPORTED_MODULE_0___default().createElement(antd__WEBPACK_IMPORTED_MODULE_10__["default"], { percent: progress }))))));
+>>>>>>> d25852c (Minor update)
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (MediaBulkUpdate);
 
@@ -77601,12 +77642,19 @@ const sendPostRequest = async (url, data, headers = {}) => {
     });
 };
 const sendGetRequest = async (url, query = {}, headers = {}) => {
+<<<<<<< HEAD
     var _a, _b;
+=======
+>>>>>>> d25852c (Minor update)
     const queryString = new URLSearchParams(query).toString();
     const requestUrl = `${url}?${queryString}`;
     const response = await fetch(requestUrl, {
         method: 'GET',
+<<<<<<< HEAD
         headers: Object.assign(Object.assign({}, headers), { 'X-WP-Nonce': (_a = window.njwVars) === null || _a === void 0 ? void 0 : _a.nonce, 'Access-Key': (_b = window.njwVars) === null || _b === void 0 ? void 0 : _b.accessKey, 'Content-Type': 'application/json' }),
+=======
+        headers: Object.assign(Object.assign({}, headers), { 'Content-Type': 'application/json' }),
+>>>>>>> d25852c (Minor update)
     });
     const data = await response.json();
     const header = response.headers;
@@ -77637,7 +77685,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   replaceUrl: () => (/* binding */ replaceUrl),
 /* harmony export */   siteUrls: () => (/* binding */ siteUrls)
 /* harmony export */ });
+<<<<<<< HEAD
 var _a;
+=======
+>>>>>>> d25852c (Minor update)
 const elementId = 'page-content';
 const defaultReactQueryOption = {
     queries: {
@@ -77649,8 +77700,12 @@ const defaultReactQueryOption = {
         retryDelay: 30000,
     },
 };
+<<<<<<< HEAD
 const pluginRoute = ((_a = window.njwVars) === null || _a === void 0 ? void 0 : _a.pluginRoute) || 'njw/v1';
 const pluginApiUrl = '/wp-json/' + pluginRoute;
+=======
+const pluginApiUrl = '/wp-json/wp/v2/njw-media/v1';
+>>>>>>> d25852c (Minor update)
 const apiEndpoint = [
     {
         method: 'GET',

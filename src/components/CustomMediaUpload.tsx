@@ -12,7 +12,7 @@ const CustomMediaUpload: React.FC<CustomMediaUploadProps> = ( {setCsvUrl}) => {
 
 	useEffect(() => {
 		if (typeof window.wp === 'undefined' || typeof window.wp.media === 'undefined') {
-			console.error('The WordPress media library is not available.');
+			console.log('The WordPress media library is not available.');
 			return;
 		}
 
