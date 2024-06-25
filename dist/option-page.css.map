@@ -1,1 +1,0 @@
-{"version":3,"file":"option-page.css","mappings":";;;AAAA;EAEC;AAAD;AAEC;EACC;AAAF,C","sources":["webpack://njw-alt-text-plugin/./src/style/option-page.scss"],"sourcesContent":[".njw-skl-field {\n\n\tmargin: 10px;\n\n\tinput {\n\t\tmin-inline-size: 450px;\n\t}\n}\n"],"names":[],"sourceRoot":""}

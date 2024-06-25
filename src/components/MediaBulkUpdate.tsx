@@ -102,7 +102,7 @@ const MediaBulkUpdate = ({baseUrl = getUrlForSite(defaultSite) }: MediaBulkUpdat
 				<Row gutter={16}>
 					<Col span={6} className="select-wrapper">
 						<p>Media id Column</p>
-						<select data-testid="media_id_select" value={mediaIdColumn} placeholder="Select a column for media id" onChange={handleMediaIdSelect}>
+						<select data-testid="media_id_select" value={mediaIdColumn} onChange={handleMediaIdSelect}>
 							{columns.map((column, index) => (
 							<option key={index} value={column}>
 								{column}
@@ -112,7 +112,7 @@ const MediaBulkUpdate = ({baseUrl = getUrlForSite(defaultSite) }: MediaBulkUpdat
 					</Col>
 					<Col span={6} className="select-wrapper">
 						<p>Media Url Column</p>
-						<select data-testid="media_url_select" value={mediaUrlColumn} placeholder="Select a column for media url" onChange={handleMediaUrlSelect}>
+						<select data-testid="media_url_select" value={mediaUrlColumn} onChange={handleMediaUrlSelect}>
 							{columns.map((column, index) => (
 							<option key={index} value={column}>
 								{column}
@@ -122,7 +122,7 @@ const MediaBulkUpdate = ({baseUrl = getUrlForSite(defaultSite) }: MediaBulkUpdat
 					</Col>
 					<Col span={6} className="select-wrapper">
 						<p> Select Limit </p>
-						<select data-testid="media_limit_select"  value={mediaLength} placeholder="Select a column for available numbers" onChange={handleLoopNumberSelect}>
+						<select data-testid="media_limit_select"  value={mediaLength} onChange={handleLoopNumberSelect}>
 							{availableNumber(csvData.length).map((number, index) => (
 								<option key={index} value={number}>
 									{number}

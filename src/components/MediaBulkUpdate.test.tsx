@@ -47,7 +47,7 @@ jest.mock('./CustomMediaUpload', () => {
   };
 });
 
-const useQueryClient = jest.fn().mockReturnValue({ fetchQuery: jest.fn() });
+// const useQueryClient = jest.fn().mockReturnValue({ fetchQuery: jest.fn() });
 
 jest.mock('../helpers/api', () => ({
   sendGetRequest: jest.fn().mockResolvedValue({ data: 'Mocked Data' }),
@@ -138,8 +138,6 @@ describe('MediaBulkUpdate component', () => {
   });
 
   it('displays processed data after successful processing', async () => {
-    const mockFetchQuery = jest.fn().mockResolvedValue({ data: 'Processed Data' });
-    jest.mocked(useQueryClient, 'fetchQuery').mockReturnValue(mockFetchQuery);
 
     render(<MediaBulkUpdate />);
 
