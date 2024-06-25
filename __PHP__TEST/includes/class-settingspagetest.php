@@ -46,7 +46,7 @@ class SettingsPageTest extends TestCase {
 		);
 
 
-		// Mock the WordPress functions used in the function
+		// Mock the WordPress functions used in the function.
 		WP_Mock::userFunction(
 			'esc_attr',
 			[

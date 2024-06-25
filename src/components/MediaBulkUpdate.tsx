@@ -1,14 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import Papa from 'papaparse';
 import { useQueryClient } from 'react-query';
-import { Select, Button, Row, Col, Progress } from 'antd';
+import { Button, Row, Col, Progress } from 'antd';
 import CustomMediaUpload from './CustomMediaUpload';
 import { sendGetRequest } from '../helpers/api';
 import {
 	getApiEndpoint, replaceMediaId, defaultSite, getUrlForSite
 } from '../helpers/conf';
-
-const { Option } = Select;
 
 type MediaBulkUpdateProps = {
 	baseUrl?: string;

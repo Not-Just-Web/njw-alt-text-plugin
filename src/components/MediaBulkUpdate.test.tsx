@@ -1,5 +1,5 @@
 // MediaBulkUpdate.test.tsx
-import { render, fireEvent, screen, waitFor, within } from '@testing-library/react';
+import { render, fireEvent, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import MediaBulkUpdate from './MediaBulkUpdate';
@@ -35,13 +35,13 @@ jest.mock('./CustomMediaUpload', () => {
     return (
       <div>
         <h4>Please upload the csv file to media library or choose a csv file to proceed.</h4>
-        <input
-          type="file"
-          id="open-media-library"
-		  role='customMediaUpload'
-          data-testid="open-media-library"
-          onChange={handleFileUpload}
-        />
+		<input
+			type="file"
+			id="open-media-library"
+			role='customMediaUpload'
+			data-testid="open-media-library"
+			onChange={handleFileUpload}
+		/>
       </div>
     );
   };
