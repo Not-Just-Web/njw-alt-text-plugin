@@ -31,7 +31,7 @@ function njw_setup_open_ai( $api_key ) {
  * @return string|null The alt text for the image, or null if an error occurred.
  */
 function njw_get_image_alt_from_open_ai( $image_url, $slug = '' ) {
-	$api_key = njw_get_single_option( 'API_ACCESS' );
+	$api_key = njw_get_single_option( 'SECRET_KEY' );
 	$headers = njw_setup_open_ai( $api_key );
 
 	// Get the prompt info.
@@ -51,18 +51,16 @@ function njw_get_image_alt_from_open_ai( $image_url, $slug = '' ) {
 					],
 					[
 						'type'      => 'image_url',
-						'image_url' => [
-							'url' => $image_url,
-						],
+						'image_url' => [ 'url' => $image_url ],
 					],
 				],
 			],
 		],
-		'max_tokens' => 300,
+		'max_tokens' => 1024,
 	];
 
 	$response = wp_remote_request(
-		'https://api.openai.com/v1/engines/davinci-codex/completions',
+		'https://api.openai.com/v1/chat/completions',
 		[
 			'method'  => 'POST',
 			'headers' => $headers,
@@ -74,7 +72,13 @@ function njw_get_image_alt_from_open_ai( $image_url, $slug = '' ) {
 		return null;
 	}
 
-	$data = json_decode( wp_remote_retrieve_body( $response ), true );
+	$response_body = wp_remote_retrieve_body( $response );
+
+	if ( $response_body !== null ) {
+		$data = json_decode( $response_body, true );
+	} else {
+		$data = null;
+	}
 
 	if ( isset( $data['choices'][0]['message']['content'] ) ) {
 		return $data['choices'][0]['message']['content'];

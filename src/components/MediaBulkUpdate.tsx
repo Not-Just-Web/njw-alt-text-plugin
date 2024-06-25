@@ -17,7 +17,8 @@ type MediaBulkUpdateProps = {
 const MediaBulkUpdate = ({baseUrl = getUrlForSite(defaultSite) }: MediaBulkUpdateProps) => {
 	const [mediaIdColumn, setMediaIdSelect] = useState<string | null>(null);
 	const [mediaUrlColumn, setMediaUrlSelect] = useState<string | null>(null);
-	const [mediaLength, setMediaLength] = useState<number>(5);
+	const [mediaLength, setMediaLength] = useState<number>(10);
+	const [responseData, setResponseData] = useState<any[]>([]);
 	const [csvData, setCsvData] = useState<any[]>([]);
 	const [columns, setColumns] = useState<string[]>([]);
 	const [csvUrl, setCsvUrl] = useState<string>('');
@@ -71,8 +72,6 @@ const MediaBulkUpdate = ({baseUrl = getUrlForSite(defaultSite) }: MediaBulkUpdat
 
 		const processedData = [];
 		let loopItem = csvData;
-		console.log('the length item:', csvData.length, mediaLength)
-		console.log('Compare:', csvData.length < mediaLength)
 		if( mediaLength < csvData.length ) {
 			loopItem = csvData.slice(0, mediaLength);
 		}
@@ -81,15 +80,16 @@ const MediaBulkUpdate = ({baseUrl = getUrlForSite(defaultSite) }: MediaBulkUpdat
 		for (const row of loopItem) {
 			if (mediaIdColumn !== null) { // Check if mediaIdColumn is not null
 				const altTextApi = replaceMediaId(getApiEndpoint('open_ai_alt_text', baseUrl), row[mediaIdColumn]);
-				console.log('Alt Text API:', altTextApi);
-				const response = await queryClient.fetchQuery(['media', row], () => sendGetRequest(altTextApi, {}));
+				const mediaUrl =  mediaUrlColumn !== null ? row[mediaUrlColumn] : '';
+				const response = await queryClient.fetchQuery(['media', row], () => sendGetRequest(altTextApi, {
+					mediaUrl: mediaUrl || ''
+				}));
 				setProgress(parseFloat(((count / loopItem.length) * 100).toFixed(2)));
-				processedData.push(response);
+				processedData.push(response.data);
+				setResponseData(processedData)
 				count++;
 			}
 		}
-
-		console.log('Processed Data:', processedData);
 	};
 
 	return (
@@ -108,7 +108,7 @@ const MediaBulkUpdate = ({baseUrl = getUrlForSite(defaultSite) }: MediaBulkUpdat
 				<Row gutter={16}>
 					<Col span={6} className="select-wrapper">
 						<p>Media id Column</p>
-						<Select placeholder="Select a column for media id" onChange={handleMediaIdSelect}>
+						<Select data-testid="media_id_select" value={mediaIdColumn} placeholder="Select a column for media id" onChange={handleMediaIdSelect}>
 							{columns.map((column) => (
 							<Option key={column} value={column}>
 								{column}
@@ -118,7 +118,7 @@ const MediaBulkUpdate = ({baseUrl = getUrlForSite(defaultSite) }: MediaBulkUpdat
 					</Col>
 					<Col span={6} className="select-wrapper">
 						<p>Media Url Column</p>
-						<Select placeholder="Select a column for media url" onChange={handleMediaUrlSelect}>
+						<Select data-testid="media_url_select" value={mediaUrlColumn} placeholder="Select a column for media url" onChange={handleMediaUrlSelect}>
 							{columns.map((column) => (
 							<Option key={column} value={column}>
 								{column}
@@ -128,7 +128,7 @@ const MediaBulkUpdate = ({baseUrl = getUrlForSite(defaultSite) }: MediaBulkUpdat
 					</Col>
 					<Col span={6} className="select-wrapper">
 						<p> Select Limit </p>
-						<Select placeholder="Select a column for available numbers" onChange={handleLoopNumberSelect}>
+						<Select data-testid="media_limit_select"  value={mediaLength} placeholder="Select a column for available numbers" onChange={handleLoopNumberSelect}>
 							{availableNumber(csvData.length).map((number) => (
 								<Option key={number} value={number}>
 									{number}
@@ -138,7 +138,7 @@ const MediaBulkUpdate = ({baseUrl = getUrlForSite(defaultSite) }: MediaBulkUpdat
 					</Col>
 					<Col span={6} className="select-wrapper">
 						<p> &nbsp;</p>
-						{mediaIdColumn && mediaUrlColumn && mediaLength &&
+						{(mediaIdColumn || mediaUrlColumn) && mediaLength &&
 							<Button onClick={handleProcess}>Process CSV</Button>
 						}
 					</Col>
@@ -152,6 +152,10 @@ const MediaBulkUpdate = ({baseUrl = getUrlForSite(defaultSite) }: MediaBulkUpdat
 				}
 			</>
 			}
+
+			{responseData && responseData.map(item => (
+				<pre>{JSON.stringify(item, null, 2)}</pre>
+			))}
 		</div>
 	)
 }

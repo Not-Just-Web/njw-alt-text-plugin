@@ -4,6 +4,10 @@ import userEvent from '@testing-library/user-event';
 import SearchResults from './SearchResults'; // Replace with the path to your component
 import { useQuery, UseQueryResult} from 'react-query'; // Add missing import
 
+import { CustomWindow } from "../helpers/types";
+
+declare let window: CustomWindow;
+
 jest.mock('react-query', () => ({
 	useQuery: jest.fn(),
 	QueryClient: jest.fn(() => ({
@@ -188,6 +192,15 @@ const mockError = {
 };
 
 describe('SearchResults component', () => {
+	beforeAll(() => {
+        // Define window.njwVars before the tests run
+        window.njwVars = {
+            pluginRoute: 'njw/v1',
+			nonce: 'your-nonce',
+			accessKey: 'your-access',
+            // Add any other properties that njwVars should have
+        };
+    });
 	beforeEach(() => {
 		(useQuery as jest.Mock<UseQueryResult | any >).mockReturnValue({ // Fix incorrect typing and function call
 			isLoading: false,

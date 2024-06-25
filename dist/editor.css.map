@@ -1,0 +1,1 @@
+{"version":3,"file":"editor.css","mappings":";;;AAAA;EACC;AACD,C","sources":["webpack://njw-alt-text-plugin/./src/style/editor.scss"],"sourcesContent":[".njw-editor {\n\tmargin: 10px;\n}\n"],"names":[],"sourceRoot":""}

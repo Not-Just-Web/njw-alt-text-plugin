@@ -1,4 +1,6 @@
-import { apiEndpointType } from './types';
+import { apiEndpointType, CustomWindow } from './types';
+
+declare let window: CustomWindow;
 
 export const elementId = 'page-content';
 
@@ -13,7 +15,8 @@ export const defaultReactQueryOption = {
 	},
 };
 
-const pluginApiUrl = '/wp-json/wp/v2/njw-media/v1';
+const pluginRoute = window.njwVars?.pluginRoute || 'njw/v1';
+const pluginApiUrl = '/wp-json/' + pluginRoute;
 export const apiEndpoint: apiEndpointType[] = [
 	{
 		method: 'GET',

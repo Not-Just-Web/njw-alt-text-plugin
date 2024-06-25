@@ -1,1 +1,11 @@
-.njw-skl-field{margin:10px}.njw-skl-field input{min-inline-size:450px}
+/*!*********************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/style/option-page.scss ***!
+  \*********************************************************************************************************************/
+.njw-skl-field {
+  margin: 10px;
+}
+.njw-skl-field input {
+  min-inline-size: 450px;
+}
+
+/*# sourceMappingURL=option-page.css.map*/

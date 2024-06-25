@@ -112,7 +112,6 @@ function njw_query_db_log_table( $condition, $column_name_alias = '*', $log = 'L
 	global $wpdb;
 	$table_name = njw_get_table_name( $log );
 	$table      = $wpdb->prefix . $table_name;
-	$param      = 'WHERE ' . $condition;
 
 	// Use $wpdb->prepare() to safely include the condition in the SQL query.
 	// Note: This assumes that $condition is a string that does not contain any user-supplied data.

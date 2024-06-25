@@ -1,4 +1,5 @@
-import { QueryParamTypes } from "./types";
+import { QueryParamTypes, CustomWindow } from "./types";
+declare let window: CustomWindow;
 
 export const fetchPosts = async () => {
 	try {
@@ -41,6 +42,8 @@ export const sendGetRequest = async (
 		method: 'GET',
 		headers: {
 			...headers,
+			'X-WP-Nonce': window.njwVars?.nonce,
+			'Access-Key': window.njwVars?.accessKey,
 			'Content-Type': 'application/json',
 		},
 	});

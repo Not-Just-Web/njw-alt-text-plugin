@@ -78,9 +78,7 @@ add_action(
 			[
 				'methods'             => [ 'POST' ],
 				'callback'            => 'njw_media_search_replace',
-				'permission_callback' => function () {
-					return current_user_can( 'edit_posts' );
-				},
+				'permission_callback' => 'njw_access_to_editor',
 			]
 		);
 
@@ -90,9 +88,18 @@ add_action(
 			[
 				'methods'             => 'POST',
 				'callback'            => 'njw_update_media_alt_text',
-				'permission_callback' => function () {
-					return current_user_can( 'manage_options' );
+				'permission_callback' => 'njw_access_to_editor',
+			]
+		);
+		register_rest_route(
+			njw_media_get_config( 'NAMESPACE' ),
+			njw_media_get_config( 'ROUTE' ) . '/test',
+			[
+				'methods'             => 'GET',
+				'callback'            => function () {
+					return wp_send_json( 'Hello World', 200 );
 				},
+				'permission_callback' => 'njw_access_to_editor',
 			]
 		);
 
@@ -102,9 +109,7 @@ add_action(
 			[
 				'methods'             => 'GET',
 				'callback'            => 'njw_media_get_alt_text_from_open_ai',
-				'permission_callback' => function () {
-					return current_user_can( 'manage_options' );
-				},
+				'permission_callback' => '__return_true',
 				'args'                => [
 					'mediaUrl' => [
 						'required'          => false, // Change to true if the parameter is required.
@@ -119,9 +124,27 @@ add_action(
 );
 
 /**
+ * Provides access to the editor.
+ *
+ * This function allows users to access the editor.
+ *
+ * @param WP_REST_Request $request The REST request object.
+ * @return boolean True if the user has access to the editor, false otherwise.
+ */
+function njw_access_to_editor( $request ) {
+	$header_access = $request->get_header( 'access-key' );
+	$param_access  = $request->get_param( 'access_key' );
+	if ( ! empty( $header_access ) || ! empty( $param_access ) ) {
+		$config_access = njw_get_single_option( 'ACCESS_KEY' );
+		return $config_access === $header_access || $config_access === $param_access;
+	} else {
+		return current_user_can( 'edit_posts' );
+	}
+}
+
+/**
  * Get the gateway endpoint from the proxy url.
- * the endpoint should be everything after /aremedia-trial-team/api-proxy/.
- * eg: if URL is https://beautyheaven.com.au/wp-json/aremedia-trial-team/api-proxy/trials/23, then endpoint will be "/trials/23".
+ * the endpoint should be everything after the proxy namespace.
  *
  * @param string $proxy_url The URL of the proxy.
  * @return string The endpoint of the proxy URL.
@@ -220,32 +243,50 @@ function njw_media_api_proxy( $req ) {
  * Runs the WP CLI search replace command.
  *
  * @param WP_REST_Request $request The REST request object.
- * @return WP_REST_Response The REST response object.
+ * @return string | WP_REST_Response The REST response object.
  */
 function njw_media_search_replace( $request ) {
 	$search  = $request->get_param( 'search' );
 	$replace = $request->get_param( 'replace' );
 
 	if ( empty( $search ) || empty( $replace ) ) {
-		return new WP_Error( 'invalid_params', 'Search and replace parameters are required.', [ 'status' => 400 ] );
+		return wp_send_json_error(
+			[
+				'message' => 'Search and replace parameters are required.',
+				'code'    => 'invalid_params',
+				'data'    => [
+					'status' => 400,
+				],
+			]
+		);
 	}
 
 	$command = "wp search-replace '{$search}' '{$replace}' --all-tables --precise --recurse-objects --skip-columns=guid";
 
 	// Run the WP CLI command.
-	// phpcs:ignore
-	exec( $command, $output, $return_code );
+	// Alternative (using temporary variables).
+	$command_op  = njw_run_cli_command( $command );
+	$output      = array_key_exists( 'output', $command_op ) ? $command_op['output'] : [];
+	$return_code = array_key_exists( 'return_code', $command_op ) ? $command_op['return_code'] : [];
 
 	$alt_response = [
 		'old_link' => $search,
 		'new_link' => $replace,
 	];
 
-	if ( $return_code !== 0 ) {
-		return new WP_Error( 'command_failed', 'Failed to run WP CLI search replace command.', [ 'status' => 500 ] );
+	if ( $return_code !== 0 && false ) {
+		return wp_send_json_error(
+			[
+				'message' => 'Failed to run WP CLI search replace command.',
+				'code'    => 'command_failed',
+				'data'    => [
+					'status' => 500,
+				],
+			]
+		);
 	}
 
-	njw_media_save_log( $alt_text_response, 'old_link', 'LINK' );
+	njw_media_save_log( $alt_response, 'old_link', 'LINK' );
 
 	return wp_send_json(
 		[
@@ -261,12 +302,20 @@ function njw_media_search_replace( $request ) {
  * Callback function for updating media alt text.
  *
  * @param WP_REST_Request $request The REST request object.
- * @return WP_REST_Response The REST response object.
+ * @return string | WP_REST_Response The REST response object.
  */
 function njw_update_media_alt_text( $request ) {
 	// Check if user is admin.
 	if ( ! current_user_can( 'manage_options' ) ) {
-		return new WP_Error( 'unauthorized', 'Unauthorized access.', [ 'status' => 401 ] );
+		return wp_send_json_error(
+			[
+				'message' => 'Unauthorized access.',
+				'code'    => 'unauthorized',
+				'data'    => [
+					'status' => 401,
+				],
+			]
+		);
 	}
 
 	// Get media ID and alt text from request.
@@ -275,7 +324,15 @@ function njw_update_media_alt_text( $request ) {
 
 	// Check if media ID and alt text are provided.
 	if ( empty( $media_id ) || empty( $alt_text ) ) {
-		return new WP_Error( 'invalid_params', 'Media ID and alt text are required.', [ 'status' => 400 ] );
+		return wp_send_json_error(
+			[
+				'message' => 'Media ID and alt text are required.',
+				'code'    => 'invalid_params',
+				'data'    => [
+					'status' => 400,
+				],
+			]
+		);
 	}
 	$prev_alt_text = get_post_meta( $media_id, '_wp_attachment_image_alt', true );
 	// Update media alt text.
@@ -295,7 +352,15 @@ function njw_update_media_alt_text( $request ) {
 	if ( $updated ) {
 		return wp_json_send( $alt_text_response, 200 );
 	} else {
-		return new WP_Error( 'update_failed', 'Failed to update media alt text.', [ 'status' => 500 ] );
+		return wp_send_json_error(
+			[
+				'message' => 'Failed to update media alt text.',
+				'code'    => 'update_failed',
+				'data'    => [
+					'status' => 500,
+				],
+			]
+		);
 	}
 }
 
@@ -308,13 +373,9 @@ function njw_update_media_alt_text( $request ) {
  *
  * @return string|WP_Error The generated alt text or an error.
  */
-function njw_media_get_alt_text_from_open_ai( WP_REST_Request $request ) {
+function njw_media_get_alt_text_from_open_ai( $request ) {
 	$media_id        = $request->get_param( 'media_id' );
 	$media_url_param = $request->get_param( 'mediaUrl' );
-
-	if ( empty( $open_ai_key ) ) {
-		return new WP_Error( 'no_openai_key', 'Open AI Key not found in headers', [ 'status' => 401 ] );
-	}
 
 	// Get media URL using media ID.
 	$attachment_url = wp_get_attachment_url( $media_id );
@@ -322,13 +383,29 @@ function njw_media_get_alt_text_from_open_ai( WP_REST_Request $request ) {
 	$media_url      = ! empty( $media_url_param ) ? $media_url_param : $attachment_url;
 
 	if ( empty( $media_url ) ) {
-		return new WP_Error( 'no_media_url', 'Media URL not found for the given media ID', [ 'status' => 404 ] );
+		return wp_send_json_error(
+			[
+				'message' => 'Media URL not found for the given media ID',
+				'code'    => 'no_media_url',
+				'data'    => [
+					'status' => 404,
+				],
+			]
+		);
 	}
 
 	$alt_text = njw_get_image_alt_from_open_ai( $media_url );
 
 	if ( empty( $alt_text ) ) {
-		return new WP_Error( 'no_alt_text', "Wasn't able to generate alt text for the image.", [ 'status' => 404 ] );
+		return wp_send_json_error(
+			[
+				'message' => "Wasn't able to generate alt text for the image.",
+				'code'    => 'no_alt_text',
+				'data'    => [
+					'status' => 404,
+				],
+			]
+		);
 	}
 
 	$alt_text_response = [

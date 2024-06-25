@@ -51,9 +51,10 @@ function njw_media_enqueue_admin_assets() {
 		$asset_file = include $asset_file_path;
 	}
 	wp_enqueue_script( 'njw-media-admin-script', njw_media_get_config( 'PLUGIN_DIR_URL' ) . 'dist/blocks.js', $asset_file['dependencies'], $asset_file['version'], true );
-	wp_enqueue_style( 'njw-media-admin-style', njw_media_get_config( 'PLUGIN_DIR_URL' ) . 'dist/blocks.css', [], $asset_file['version'] );
+	wp_enqueue_style( 'njw-media-admin-style', njw_media_get_config( 'PLUGIN_DIR_URL' ) . 'dist/blocks.css', $asset_file['dependencies'], $asset_file['version'] );
 }
 add_action( 'admin_enqueue_scripts', 'njw_media_enqueue_admin_assets' );
+
 
 /**
  * Enqueues the necessary assets for the NJW Media plugin option page.
@@ -64,8 +65,7 @@ add_action( 'admin_enqueue_scripts', 'njw_media_enqueue_admin_assets' );
  * @since 1.0.0
  */
 function njw_media_enqueue_cms_page_assets() {
-	// phpcs:ignore
-	if ( isset( $_GET['page'] ) && $_GET['page'] === 'njw-wp-media' ) {
+	if ( njw_media_get_page() === 'njw-wp-media' ) {
 		$asset_file_path = njw_media_get_config( 'PLUGIN_DIR_PATH' ) . 'dist/cms.asset.php';
 		$asset_file      = [
 			'dependencies' => [],
@@ -75,9 +75,19 @@ function njw_media_enqueue_cms_page_assets() {
 		if ( file_exists( $asset_file_path ) ) {
 			$asset_file = include $asset_file_path;
 		}
+		$nonce =
 		wp_enqueue_media();
 		wp_enqueue_script( 'njw-media-cms-script', njw_media_get_config( 'PLUGIN_DIR_URL' ) . 'dist/cms.js', $asset_file['dependencies'], $asset_file['version'], true );
-		wp_enqueue_style( 'njw-media-cms-style', njw_media_get_config( 'PLUGIN_DIR_URL' ) . 'dist/cms.css', [], $asset_file['version'] );
+		wp_localize_script(
+			'njw-media-cms-script',
+			'njwVars',
+			[
+				'nonce'       => wp_create_nonce( 'wp_rest' ),
+				'pluginRoute' => njw_media_get_config( 'NAMESPACE' ) . '/' . njw_media_get_config( 'ROUTE' ) . '/',
+				'accessKey'   => njw_get_single_option( 'ACCESS_KEY' ),
+			]
+		);
+		wp_enqueue_style( 'njw-media-cms-style', njw_media_get_config( 'PLUGIN_DIR_URL' ) . 'dist/cms.css', $asset_file['dependencies'], $asset_file['version'] );
 	}
 }
 add_action( 'admin_enqueue_scripts', 'njw_media_enqueue_cms_page_assets' );
@@ -91,8 +101,7 @@ add_action( 'admin_enqueue_scripts', 'njw_media_enqueue_cms_page_assets' );
  * @since 1.0.0
  */
 function njw_media_enqueue_option_page_assets() {
-	// phpcs:ignore
-	if ( isset( $_GET['page'] ) && $_GET['page'] === 'njw_media' ) {
+	if ( njw_media_get_page() === 'njw-media-option' ) {
 		$asset_file_path = njw_media_get_config( 'PLUGIN_DIR_PATH' ) . 'dist/option-page.asset.php';
 		$asset_file      = [
 			'dependencies' => [],
@@ -103,19 +112,34 @@ function njw_media_enqueue_option_page_assets() {
 			$asset_file = include $asset_file_path;
 		}
 		wp_enqueue_script( 'njw-media-option-page-script', njw_media_get_config( 'PLUGIN_DIR_URL' ) . 'dist/option-page.js', $asset_file['dependencies'], $asset_file['version'], true );
-		wp_enqueue_style( 'njw-media-option-page-style', njw_media_get_config( 'PLUGIN_DIR_URL' ) . 'dist/option-page.css', [], $asset_file['version'] );
+		wp_enqueue_style( 'njw-media-option-page-style', njw_media_get_config( 'PLUGIN_DIR_URL' ) . 'dist/option-page.css', $asset_file['dependencies'], $asset_file['version'] );
 	}
 }
 add_action( 'admin_enqueue_scripts', 'njw_media_enqueue_option_page_assets' );
 
 /**
- * Enqueue editor script.
+ * Enqueues the necessary assets for the NJW Media plugin editor page.
+ *
+ * This function is responsible for enqueueing the CSS and JavaScript files required for the editor page of the NJW Media plugin.
+ * It should be called within the admin_enqueue_scripts action hook.
+ *
+ * @since 1.0.0
  */
-function njw_media_editor_script() {
-	$asset_file = include njw_media_api_config( 'PLUGIN_DIR_PATH' ) . 'dist/editor.asset.php';
-	wp_enqueue_script( 'njw-media-editor-script', njw_media_api_config( 'PLUGIN_DIR_URL' ) . 'dist/editor.js', $asset_file['dependencies'], $asset_file['version'], true );
+function njw_media_enqueue_editor_page_assets() {
+
+	$asset_file_path = njw_media_get_config( 'PLUGIN_DIR_PATH' ) . 'dist/editor.asset.php';
+	$asset_file      = [
+		'dependencies' => [],
+		'version'      => '1.0.0',
+	];
+
+	if ( file_exists( $asset_file_path ) ) {
+		$asset_file = include $asset_file_path;
+	}
+	wp_enqueue_script( 'njw-media-editor-page-script', njw_media_get_config( 'PLUGIN_DIR_URL' ) . 'dist/editor.js', $asset_file['dependencies'], $asset_file['version'], true );
+	wp_enqueue_style( 'njw-media-editor-page-style', njw_media_get_config( 'PLUGIN_DIR_URL' ) . 'dist/editor.css', $asset_file['dependencies'], $asset_file['version'] );
 }
-add_action( 'enqueue_block_editor_assets', 'njw_media_editor_script' );
+add_action( 'enqueue_block_editor_assets', 'njw_media_enqueue_editor_page_assets' );
 
 /**
  * Adds a custom menu page to the WordPress admin area.

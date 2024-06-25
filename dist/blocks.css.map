@@ -1,0 +1,1 @@
+{"version":3,"file":"blocks.css","mappings":";;;AAAA;EACC;AACD,C","sources":["webpack://njw-alt-text-plugin/./src/style/blocks.scss"],"sourcesContent":[".blocks {\n\tmargin: 0;\n}\n"],"names":[],"sourceRoot":""}

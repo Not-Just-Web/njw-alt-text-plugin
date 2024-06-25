@@ -16,7 +16,7 @@
  * @return void
  */
 function njw_media_define_constant_with_prefix( $constant_name, $value ) {
-	$constant_name_prefix = 'njw_media_';
+	$constant_name_prefix = 'NJW_MEDIA_';
 	$new_constant_name    = $constant_name_prefix . $constant_name;
 	if ( ! defined( $new_constant_name ) ) {
 		define( $new_constant_name, $value );
@@ -40,5 +40,5 @@ njw_media_define_constant_with_prefix( 'AI_PROMPT', 'Please provide the alt text
  * @return string The configuration settings for Trackonomics.
  */
 function njw_media_get_config( $constant_name ) {
-	return constant( 'njw_media_' . $constant_name );
+	return constant( 'NJW_MEDIA_' . $constant_name );
 }

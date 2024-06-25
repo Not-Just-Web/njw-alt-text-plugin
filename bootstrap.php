@@ -2,7 +2,7 @@
 /**
  * PHPUnit bootstrap file
  *
- * @package WP_React_Skeleton
+ * @package Bootstrap
  */
 
 /**
@@ -10,28 +10,6 @@
  */
 require_once __DIR__ . '/vendor/autoload.php';
 
-// Bootstrap WP_Mock to initialize built-in features.
-WP_Mock::bootstrap();
-
-WP_Mock::userFunction(
-	'plugin_dir_path',
-	[
-		'return' => __DIR__ . '/',
-	]
-);
-
-WP_Mock::userFunction(
-	'plugin_dir_url',
-	[
-		'return' => '/wp-content/plugins/njw-alt-text-plugin/',
-	]
-);
-
-WP_Mock::userFunction(
-	'register_activation_hook',
-	[
-		'return' => true,
-	]
-);
+require_once __DIR__ . '/bootstrap-wp-mock.php';
 
 require_once __DIR__ . '/njw-alt-text-plugin.php';

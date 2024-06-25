@@ -11,6 +11,7 @@ export type apiEndpointType = {
 export type QueryParamTypes = {
 	per_page?: number;
 	page?: number;
+	mediaUrl?: string;
 	search?: string;
 	orderby?: string;
 	order?: 'asc' | 'desc';
@@ -18,6 +19,11 @@ export type QueryParamTypes = {
 
 export interface CustomWindow extends Window {
 	wp: any;
+	njwVars: {
+		nonce: string;
+		accessKey: string;
+		pluginRoute: string;
+	}
 }
 
 export interface MediaType {
