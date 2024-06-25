@@ -402,10 +402,16 @@ class ActivationTest extends TestCase {
 	 */
 	public function test_njw_media_upload_mimes() {
 		// Call the function with a sample array
-		$result = njw_media_upload_mimes(['jpg' => 'image/jpeg']);
+		$result = njw_media_upload_mimes( [ 'jpg' => 'image/jpeg' ] );
 
 		// Check that the csv mime type was added
-		$this->assertEquals(['jpg' => 'image/jpeg', 'csv' => 'text/csv'], $result);
+		$this->assertEquals(
+			[
+				'jpg' => 'image/jpeg',
+				'csv' => 'text/csv',
+			],
+			$result 
+		);
 	}
 
 	/**
@@ -419,8 +425,8 @@ class ActivationTest extends TestCase {
 	 */
 	public function test_njw_media_plugin_activation() {
 		// Mock the njw_create_link_log_table and njw_create_media_log_table functions
-		WP_Mock::userFunction('njw_create_link_log_table');
-		WP_Mock::userFunction('njw_create_media_log_table');
+		WP_Mock::userFunction( 'njw_create_link_log_table' );
+		WP_Mock::userFunction( 'njw_create_media_log_table' );
 
 		// Call the function
 		njw_media_plugin_activation();
@@ -428,5 +434,4 @@ class ActivationTest extends TestCase {
 		// Check that the functions were called
 		$this->assertConditionsMet();
 	}
-
 }
