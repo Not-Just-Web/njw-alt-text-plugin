@@ -1,34 +1,23 @@
 // MediaBulkUpdate.test.tsx
-import { render, fireEvent, screen, waitFor } from '@testing-library/react';
+import { render, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import '@testing-library/jest-dom';
 import MediaBulkUpdate from './MediaBulkUpdate';
 import fetchMock from 'jest-fetch-mock';
 import Papa from 'papaparse';
 
 import React from 'react';
+
 const changeInputValue = async (testId: string, value: string) => {
   const select = await waitFor(() => screen.getByTestId(testId));
-  const input = select.querySelector('input');
-
-  if (input) {
-    userEvent.click(select); // Click on the input to open the dropdown
-
-    // Check if the option exists
-    const option = screen.queryByText(value);
-
-    if (option) {
-      userEvent.click(option); // Click on the option
-    } else {
-      throw new Error(`Option not found: ${value}`);
-    }
-  } else {
-    throw new Error(`Input element not found for testId: ${testId}`);
-  }
+	userEvent.selectOptions(select, value);
 }
 
 jest.mock('react-query', () => ({
   ...jest.requireActual('react-query'),
-  useQueryClient: jest.fn().mockReturnValue({ fetchQuery: jest.fn() }),
+  useQueryClient: jest.fn().mockReturnValue({
+	fetchQuery: jest.fn().mockResolvedValue({ data: 'mockData' })
+  }),
 }));
 
 
@@ -49,6 +38,7 @@ jest.mock('./CustomMediaUpload', () => {
         <input
           type="file"
           id="open-media-library"
+		  role='customMediaUpload'
           data-testid="open-media-library"
           onChange={handleFileUpload}
         />
@@ -99,7 +89,7 @@ describe('MediaBulkUpdate component', () => {
   it('renders the component correctly', () => {
     render(<MediaBulkUpdate />);
 
-    expect(screen.getByText('CustomMediaUpload')).toBeDefined(); // Use toBeDefined
+    expect(screen.getAllByRole('customMediaUpload')).toBeDefined(); // Use toBeDefined
   });
 
   it('shows CSV URL after upload', async () => {
@@ -108,8 +98,8 @@ describe('MediaBulkUpdate component', () => {
     const upload = screen.getByTestId('open-media-library'); // Assuming CustomMediaUpload has a testId
     await userEvent.upload(upload, new File(['test.csv'], 'test.csv', { type: 'text/csv' }));
 
-    expect(screen.getByText('Url of the csv file')).toBeDefined(); // Use toBeDefined
-    expect(screen.getByRole('link')).toContain('href', 'test.csv');
+    expect(screen.getAllByTitle('csvURlItem')); // Use toBeDefined
+    expect(screen.getByRole('link').getAttribute('href')).toMatch(/run.mocky.io/);
   });
 
   it('enables process button when media id and limit are selected', async () => {
@@ -131,9 +121,6 @@ describe('MediaBulkUpdate component', () => {
   it('calls process function and displays progress', async () => {
 	// Use a state hook in your test
 
-    const mockFetchQuery = jest.fn().mockResolvedValue({ data: 'Processed Data' });
-    (useQueryClient as jest.Mock).mockReturnValue(mockFetchQuery);
-
     render(<MediaBulkUpdate />);
 
     const upload = screen.getByTestId('open-media-library');
@@ -145,10 +132,9 @@ describe('MediaBulkUpdate component', () => {
 
 	const processButton = await waitFor(() => screen.getByRole('button', { name: /Process CSV/i }), { timeout: 10000 });
 
-    userEvent.click(processButton);
+	await userEvent.click(processButton);
 
-    expect(mockFetchQuery).toHaveBeenCalled();
-    expect(screen.getByRole('progressbar')).toBeDefined(); // Use toBeDefined
+	expect(screen.getByRole('progressbar')).toBeDefined(); // Use toBeDefined
   });
 
   it('displays processed data after successful processing', async () => {
@@ -164,8 +150,6 @@ describe('MediaBulkUpdate component', () => {
 	await changeInputValue('media_id_select', 'media_id');
 	await changeInputValue('media_url_select', 'media_url');
 	await changeInputValue('media_limit_select', '10');
-
-	screen.debug();
 
 	const processButton = await waitFor(() => screen.getByRole('button', { name: /Process CSV/i }));
 

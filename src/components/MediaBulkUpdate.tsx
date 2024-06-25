@@ -15,8 +15,8 @@ type MediaBulkUpdateProps = {
 }
 
 const MediaBulkUpdate = ({baseUrl = getUrlForSite(defaultSite) }: MediaBulkUpdateProps) => {
-	const [mediaIdColumn, setMediaIdSelect] = useState<string | null>(null);
-	const [mediaUrlColumn, setMediaUrlSelect] = useState<string | null>(null);
+	const [mediaIdColumn, setMediaIdSelect] = useState<string >('');
+	const [mediaUrlColumn, setMediaUrlSelect] = useState<string>('');
 	const [mediaLength, setMediaLength] = useState<number>(10);
 	const [responseData, setResponseData] = useState<any[]>([]);
 	const [csvData, setCsvData] = useState<any[]>([]);
@@ -26,16 +26,16 @@ const MediaBulkUpdate = ({baseUrl = getUrlForSite(defaultSite) }: MediaBulkUpdat
 
 	const queryClient = useQueryClient();
 
-	const handleMediaIdSelect = (value: string) => {
-		setMediaIdSelect(value);
+	const handleMediaIdSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		setMediaIdSelect(e.target.value);
 	}
 
-	const handleLoopNumberSelect = (value: number) => {
-		setMediaLength(value);
+	const handleLoopNumberSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		setMediaLength(parseInt(e.target.value));
 	}
 
-	const handleMediaUrlSelect = (value: string) => {
-		setMediaUrlSelect(value);
+	const handleMediaUrlSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		setMediaUrlSelect(e.target.value);
 	}
 
 	const availableNumber = ( total: number ) : number[] => {
@@ -67,15 +67,11 @@ const MediaBulkUpdate = ({baseUrl = getUrlForSite(defaultSite) }: MediaBulkUpdat
 	}, [csvUrl])
 
 	const handleProcess = async () => {
-		console.log('Processing CSV');
-		console.log(csvData);
-
 		const processedData = [];
 		let loopItem = csvData;
 		if( mediaLength < csvData.length ) {
 			loopItem = csvData.slice(0, mediaLength);
 		}
-		console.log('the loop item:', loopItem)
 		let count = 1;
 		for (const row of loopItem) {
 			if (mediaIdColumn !== null) { // Check if mediaIdColumn is not null
@@ -96,7 +92,7 @@ const MediaBulkUpdate = ({baseUrl = getUrlForSite(defaultSite) }: MediaBulkUpdat
 		<div>
 			<CustomMediaUpload setCsvUrl={setCsvUrl} />
 			{ csvUrl &&
-				<p> Url of the csv file :
+				<p title="csvURlItem"> Url of the csv file :
 					<a href={csvUrl ?? '#'} target="_blank" rel="noopener noreferrer">
 						{csvUrl}
 					</a>
@@ -108,33 +104,33 @@ const MediaBulkUpdate = ({baseUrl = getUrlForSite(defaultSite) }: MediaBulkUpdat
 				<Row gutter={16}>
 					<Col span={6} className="select-wrapper">
 						<p>Media id Column</p>
-						<Select data-testid="media_id_select" value={mediaIdColumn} placeholder="Select a column for media id" onChange={handleMediaIdSelect}>
-							{columns.map((column) => (
-							<Option key={column} value={column}>
+						<select data-testid="media_id_select" value={mediaIdColumn} placeholder="Select a column for media id" onChange={handleMediaIdSelect}>
+							{columns.map((column, index) => (
+							<option key={index} value={column}>
 								{column}
-							</Option>
+							</option>
 							))}
-						</Select>
+						</select>
 					</Col>
 					<Col span={6} className="select-wrapper">
 						<p>Media Url Column</p>
-						<Select data-testid="media_url_select" value={mediaUrlColumn} placeholder="Select a column for media url" onChange={handleMediaUrlSelect}>
-							{columns.map((column) => (
-							<Option key={column} value={column}>
+						<select data-testid="media_url_select" value={mediaUrlColumn} placeholder="Select a column for media url" onChange={handleMediaUrlSelect}>
+							{columns.map((column, index) => (
+							<option key={index} value={column}>
 								{column}
-							</Option>
+							</option>
 							))}
-						</Select>
+						</select>
 					</Col>
 					<Col span={6} className="select-wrapper">
 						<p> Select Limit </p>
-						<Select data-testid="media_limit_select"  value={mediaLength} placeholder="Select a column for available numbers" onChange={handleLoopNumberSelect}>
-							{availableNumber(csvData.length).map((number) => (
-								<Option key={number} value={number}>
+						<select data-testid="media_limit_select"  value={mediaLength} placeholder="Select a column for available numbers" onChange={handleLoopNumberSelect}>
+							{availableNumber(csvData.length).map((number, index) => (
+								<option key={index} value={number}>
 									{number}
-								</Option>
+								</option>
 							))}
-						</Select>
+						</select>
 					</Col>
 					<Col span={6} className="select-wrapper">
 						<p> &nbsp;</p>
@@ -153,8 +149,8 @@ const MediaBulkUpdate = ({baseUrl = getUrlForSite(defaultSite) }: MediaBulkUpdat
 			</>
 			}
 
-			{responseData && responseData.map(item => (
-				<pre>{JSON.stringify(item, null, 2)}</pre>
+			{responseData && responseData.map((item, index) => (
+				<pre key={index}>{JSON.stringify(item, null, 2)}</pre>
 			))}
 		</div>
 	)
