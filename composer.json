@@ -17,16 +17,17 @@
         }
 	},
 	"autoload": {
-        "psr-4": {"WpReactSkeleton\\": "./"}
+        "psr-4": {"NJWMedia\\": "./"}
     },
 	"autoload-dev": {
         "psr-4": {
-            "WpReactSkeleton\\Tests\\": "__PHP__TEST/"
+            "NJWMedia\\Tests\\": "__PHP__TEST/"
         }
     },
 	"require-dev": {
 		"10up/wp_mock": "dev-trunk",
 		"automattic/vipwpcs": "^3.0",
+		"dealerdirect/phpcodesniffer-composer-installer": "^1.0",
 		"phpcompatibility/phpcompatibility-wp": "^2.1",
 		"phpunit/phpunit": "^9.6",
 		"squizlabs/php_codesniffer": "^3.9",
